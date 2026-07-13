@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Clinica {
+  id                 String   @id @default(uuid())
+  nome               String
+  cnpj               String?
+  telefone           String?
+  endereco           String?
+  logo               String?
+  horarioFuncionamento String?
+  fusoHorario        String   @default("America/Sao_Paulo")
+  financeiroAtivo    Boolean  @default(false)
+  n8nWebhookUrl      String?
+  evolutionApiUrl    String?
+  evolutionApiKey    String?  // Armazenado criptografado AES-256
+  adminEmail         String?
+  adminUserId        String?
+  trialEndsAt        DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  profissionais      Profissional[]
+  pacientes          Paciente[]
+  servicos           Servico[]
+  consultas          Consulta[]
+  whatsappInstancias WhatsappInstancia[]
+  financeiro         Financeiro[]
+  lembretesConfig    LembreteConfig[]
+  auditoria          Auditoria[]
+
+  @@map("sistema_clinicas_agenciaduo_clinicas")
+}
+
+model Profissional {
+  id                     String   @id @default(uuid())
+  clinicaId              String
+  nome                   String
+  especialidade          String?
+  registroProfissional   String?
+  fotoUrl                String?
+  bio                    String?
+  duracaoPadraoConsulta  Int      @default(30)
+  ativo                  Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  clinica                Clinica  @relation(fields: [clinicaId], references: [id])
+  horarios               HorarioProfissional[]
+  servicos               ProfissionalServico[]
+  bloqueios              BloqueioAgenda[]
+  consultas              Consulta[]
+  financeiro             Financeiro[]
+
+  @@map("sistema_clinicas_agenciaduo_profissionais")
+}
+
+model HorarioProfissional {
+  id              String   @id @default(uuid())
+  profissionalId  String
+  diaSemana       Int      // 0 = Domingo, 1 = Segunda, ..., 6 = Sabado
+  horaInicio      String   // Formato "HH:mm"
+  horaFim         String   // Formato "HH:mm"
+
+  profissional    Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+
+  @@map("sistema_clinicas_agenciaduo_horarios_profissionais")
+}
+
+model ProfissionalServico {
+  id                 String   @id @default(uuid())
+  profissionalId     String
+  servicoId          String
+  valorPersonalizado Decimal? @db.Decimal(10, 2)
+
+  profissional       Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  servico            Servico      @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+
+  @@map("sistema_clinicas_agenciaduo_profissional_servicos")
+}
+
+model BloqueioAgenda {
+  id              String   @id @default(uuid())
+  profissionalId  String
+  dataInicio      DateTime
+  dataFim         DateTime
+  motivo          String?
+
+  profissional    Profissional @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+
+  @@map("sistema_clinicas_agenciaduo_bloqueios_agenda")
+}
+
+model Paciente {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  nome            String
+  telefone        String?
+  email           String?
+  dataNascimento  DateTime?
+  cpf             String?  // Criptografado AES-256
+  genero          String?
+  observacoes     String?
+  ativo           Boolean  @default(true) // Soft delete
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  clinica         Clinica  @relation(fields: [clinicaId], references: [id])
+  consultas       Consulta[]
+  financeiro      Financeiro[]
+
+  @@map("sistema_clinicas_agenciaduo_pacientes")
+}
+
+model Servico {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  nome            String
+  descricao       String?
+  duracaoMinutos  Int      @default(30)
+  valorPadrao     Decimal  @db.Decimal(10, 2)
+  ativo           Boolean  @default(true)
+
+  clinica         Clinica  @relation(fields: [clinicaId], references: [id])
+  profissionais   ProfissionalServico[]
+  consultas       Consulta[]
+
+  @@map("sistema_clinicas_agenciaduo_servicos")
+}
+
+model Consulta {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  pacienteId      String
+  profissionalId  String
+  servicoId       String
+  dataHoraInicio  DateTime
+  dataHoraFim     DateTime
+  status          String   @default("agendado") // agendado | confirmado | cancelado | realizado | faltou
+  observacoes     String?
+  valorCobrado    Decimal? @db.Decimal(10, 2)
+  createdBy       String?  // ID do usuario que criou (Clerk)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  clinica         Clinica      @relation(fields: [clinicaId], references: [id])
+  paciente        Paciente     @relation(fields: [pacienteId], references: [id])
+  profissional    Profissional @relation(fields: [profissionalId], references: [id])
+  servico         Servico      @relation(fields: [servicoId], references: [id])
+  historico       ConsultaHistorico[]
+  financeiro      Financeiro[]
+
+  @@map("sistema_clinicas_agenciaduo_consultas")
+}
+
+model ConsultaHistorico {
+  id              String   @id @default(uuid())
+  consultaId      String
+  statusAnterior  String
+  statusNovo      String
+  motivo          String?
+  alteradoPor     String?
+  createdAt       DateTime @default(now())
+
+  consulta        Consulta @relation(fields: [consultaId], references: [id], onDelete: Cascade)
+
+  @@map("sistema_clinicas_agenciaduo_consultas_historico")
+}
+
+model LembreteConfig {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  antecedencia    String   // "24h", "2h", "1h"
+  ativo           Boolean  @default(true)
+
+  clinica         Clinica  @relation(fields: [clinicaId], references: [id])
+
+  @@map("sistema_clinicas_agenciaduo_lembretes_config")
+}
+
+model LembreteLog {
+  id              String   @id @default(uuid())
+  consultaId      String
+  antecedencia    String
+  status          String   // enviado | falhou
+  tentativas      Int      @default(1)
+  dataEnvio       DateTime @default(now())
+
+  @@map("sistema_clinicas_agenciaduo_lembretes_log")
+}
+
+model WhatsappInstancia {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  instanciaNome   String
+  instanciaId     String?
+  hash            String?
+  status          String   @default("aguardando_qr") // conectado | desconectado | aguardando_qr
+  updatedAt       DateTime @updatedAt
+
+  clinica         Clinica  @relation(fields: [clinicaId], references: [id])
+
+  @@map("sistema_clinicas_agenciaduo_whatsapp_instancias")
+}
+
+model Financeiro {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  consultaId      String?
+  pacienteId      String?
+  profissionalId  String?
+  valor           Decimal  @db.Decimal(10, 2)
+  statusPagamento String   @default("pendente") // pendente | pago | cancelado | reembolsado
+  formaPagamento  String?  // dinheiro | pix | cartao_credito | cartao_debito | convenio
+  dataPagamento   DateTime?
+  observacoes     String?
+  createdAt       DateTime @default(now())
+
+  clinica         Clinica       @relation(fields: [clinicaId], references: [id])
+  consulta        Consulta?     @relation(fields: [consultaId], references: [id])
+  paciente        Paciente?     @relation(fields: [pacienteId], references: [id])
+  profissional    Profissional? @relation(fields: [profissionalId], references: [id])
+
+  @@map("sistema_clinicas_agenciaduo_financeiro")
+}
+
+model Auditoria {
+  id              String   @id @default(uuid())
+  clinicaId       String
+  usuarioId       String
+  acao            String
+  entidade        String
+  entidadeId      String
+  dadosAnteriores Json?
+  dadosNovos      Json?
+  ip              String?
+  createdAt       DateTime @default(now())
+
+  clinica         Clinica  @relation(fields: [clinicaId], references: [id])
+
+  @@map("sistema_clinicas_agenciaduo_auditoria")
+}
