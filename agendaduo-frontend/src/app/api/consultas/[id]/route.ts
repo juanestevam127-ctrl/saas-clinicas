@@ -9,7 +9,7 @@ function err(msg: string, status = 400) {
   return NextResponse.json({ message: msg }, { status });
 }
 
-async function checkConflict(db: any, profissionalId: string, inicio: Date, fim: Date, ignorarId?: string) {
+async function checkConflict(db: any, profissionalId: string, inicio: Date, fim: Date, ignorarId?: string, ignorarGoogleEventId?: string) {
   let query = db
     .from(TABLES.consultas)
     .select('id')
@@ -23,6 +23,29 @@ async function checkConflict(db: any, profissionalId: string, inicio: Date, fim:
   const { data } = await query;
   if (data && data.length > 0) {
     throw new Error('O profissional já possui uma consulta neste horário.');
+  }
+
+  // Verificar conflito no Google Agenda
+  try {
+    const { getAuthenticatedClient } = await import('@/lib/google-calendar');
+    const authData = await getAuthenticatedClient(profissionalId, db);
+    if (authData) {
+      const { google } = await import('googleapis');
+      const calendar = google.calendar({ version: 'v3', auth: authData.client });
+      const listResp = await calendar.events.list({
+        calendarId: authData.calendarId,
+        timeMin: inicio.toISOString(),
+        timeMax: fim.toISOString(),
+        singleEvents: true,
+      });
+      const events = listResp.data.items || [];
+      const conflicting = events.filter((e: any) => e.id !== ignorarGoogleEventId);
+      if (conflicting.length > 0) {
+        throw new Error('O profissional já possui um compromisso no Google Agenda neste horário.');
+      }
+    }
+  } catch (gErr: any) {
+    if (gErr.message.includes('Google Agenda')) throw gErr;
   }
 }
 
@@ -110,7 +133,7 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       const fim = new Date(body.dataHoraFim ?? consulta.data_hora_fim);
       try {
         await checkHorariosFuncionamento(db, cid, inicio, fim);
-        await checkConflict(db, body.profissionalId ?? consulta.profissional_id, inicio, fim, params.id);
+        await checkConflict(db, body.profissionalId ?? consulta.profissional_id, inicio, fim, params.id, (consulta as any).google_event_id);
       } catch (e: any) {
         return err(e.message);
       }

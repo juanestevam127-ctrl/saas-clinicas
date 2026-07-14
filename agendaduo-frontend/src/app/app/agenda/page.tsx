@@ -79,10 +79,32 @@ export default function AgendaPage() {
   const [profissionais, setProfissionais] = useState<any[]>([]);
   const [servicos, setServicos] = useState<any[]>([]);
   const [pacientes, setPacientes] = useState<any[]>([]);
+  const [googleEvents, setGoogleEvents] = useState<any[]>([]);
 
   // Perfil de acesso/visualização
   const [userRole, setUserRole] = useState<'admin' | 'profissional'>('admin');
   const [selectedProfissionalId, setSelectedProfissionalId] = useState<string>('');
+
+  const fetchGoogleEvents = async (profId?: string) => {
+    const activeProfId = profId || selectedProfissionalId || localStorage.getItem('agendaduo_user_profissional_id') || '';
+    if (!activeProfId) {
+      setGoogleEvents([]);
+      return;
+    }
+    try {
+      const startStr = weekDates[0].toISOString();
+      const endStr = weekDates[6].toISOString();
+      const { data } = await api.get(`/auth/google/events?profissionalId=${activeProfId}&start=${startStr}&end=${endStr}`);
+      if (Array.isArray(data)) {
+        setGoogleEvents(data);
+      } else {
+        setGoogleEvents([]);
+      }
+    } catch (err) {
+      console.error('Erro ao buscar eventos do Google:', err);
+      setGoogleEvents([]);
+    }
+  };
   const [currentProfData, setCurrentProfData] = useState<any>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -194,6 +216,10 @@ export default function AgendaPage() {
     }
   };
 
+  useEffect(() => {
+    fetchGoogleEvents();
+  }, [selectedProfissionalId, currentDate, view]);
+
   const fetchData = async () => {
     try {
       const [consRes, profRes, servRes, pacRes] = await Promise.all([
@@ -206,6 +232,7 @@ export default function AgendaPage() {
       setProfissionais(profRes.data);
       setServicos(servRes.data);
       setPacientes(pacRes.data);
+      fetchGoogleEvents();
     } catch (error) {
       toast.error('Erro ao buscar dados da agenda');
     }
@@ -491,6 +518,10 @@ export default function AgendaPage() {
                   const d = new Date(c.dataHoraInicio);
                   return d.toDateString() === date.toDateString() && d.getHours() === hour;
                 });
+                const dayGoogleEvents = googleEvents.filter(e => {
+                  const d = new Date(e.start);
+                  return d.toDateString() === date.toDateString() && d.getHours() === hour;
+                });
                 const isToday = date.toDateString() === todayStr;
                 const isSelected = date.toDateString() === currentDateStr;
 
@@ -518,6 +549,26 @@ export default function AgendaPage() {
                               🩺 {c.profissional.nome}
                             </div>
                           )}
+                        </div>
+                      );
+                    })}
+
+                    {dayGoogleEvents.map((e) => {
+                      const startT = new Date(e.start);
+                      const endT = new Date(e.end);
+                      const dur = (endT.getTime() - startT.getTime()) / 60000;
+                      return (
+                        <div
+                          key={e.id}
+                          className="bg-slate-100 border-slate-200 border text-slate-600 rounded-lg px-2 py-1.5 text-xs mb-1 select-none hover:shadow-sm"
+                          title={e.title}
+                        >
+                          <div className="font-semibold text-slate-700 truncate flex items-center gap-1">
+                            📅 {e.title}
+                          </div>
+                          <div className="text-[10px] text-slate-400 mt-0.5">
+                            {startT.getHours().toString().padStart(2, '0')}:{startT.getMinutes().toString().padStart(2, '0')} · {dur}min
+                          </div>
                         </div>
                       );
                     })}
