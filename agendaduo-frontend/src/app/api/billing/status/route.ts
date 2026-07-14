@@ -19,11 +19,36 @@ export async function GET(req: NextRequest) {
     // 1. Obter dados da clínica
     const { data: clinica, error: clinicaError } = await db
       .from(TABLES.clinicas as any)
-      .select('nome, plano_status, plano_expira_em, asaas_customer_id, asaas_subscription_id')
+      .select('nome, cnpj, plano_status, plano_expira_em, asaas_customer_id, asaas_subscription_id')
       .eq('id', cid)
       .single();
 
     if (clinicaError || !clinica) return err('Clínica não encontrada', 404);
+
+    let planoExpiraEm = clinica.plano_expira_em;
+    if (!planoExpiraEm) {
+      // Tentar obter do bio do administrador como fallback para clínicas antigas
+      const { data: profissionais } = await db
+        .from(TABLES.profissionais as any)
+        .select('bio')
+        .eq('clinica_id', cid);
+      
+      const adminProf = (profissionais || []).find((p: any) => {
+        try {
+          const meta = JSON.parse(p.bio || '{}');
+          return meta.role === 'admin';
+        } catch { return false; }
+      });
+
+      if (adminProf?.bio) {
+        try {
+          const meta = JSON.parse(adminProf.bio);
+          if (meta.trialEndsAt) {
+            planoExpiraEm = meta.trialEndsAt;
+          }
+        } catch {}
+      }
+    }
 
     // 2. Obter quantidade de profissionais ativos
     const { data: profissionais, error: profError } = await db
@@ -41,14 +66,17 @@ export async function GET(req: NextRequest) {
     const totalPrice = basePrice + (extraProfs * extraPrice);
 
     return NextResponse.json({
-      clinica: toCamelCase(clinica),
+      clinica: {
+        ...toCamelCase(clinica),
+        planoExpiraEm, // Garante que a data calculada (ou fallback) seja retornada
+      },
       totalProfessionals: profCount,
       baseLimit,
       extraProfessionals: extraProfs,
       basePrice,
       extraPrice,
       totalPrice,
-      isTrialExpired: clinica.plano_expira_em ? new Date(clinica.plano_expira_em) < new Date() : false,
+      isTrialExpired: planoExpiraEm ? new Date(planoExpiraEm) < new Date() : false,
     });
   } catch (e: any) {
     return err(e.message, 500);
