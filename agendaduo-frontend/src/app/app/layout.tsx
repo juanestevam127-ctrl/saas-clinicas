@@ -20,6 +20,7 @@ export default function DashboardLayout({
   const [billing, setBilling] = useState<any>(null);
   const [checkingBilling, setCheckingBilling] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [cnpjInput, setCnpjInput] = useState('');
 
   useEffect(() => {
     const role = localStorage.getItem('agendaduo_user_role');
@@ -38,6 +39,9 @@ export default function DashboardLayout({
       if (data.clinica?.planoExpiraEm) {
         localStorage.setItem('agendaduo_trial_ends_at', data.clinica.planoExpiraEm);
       }
+      if (data.clinica?.cnpj) {
+        setCnpjInput(data.clinica.cnpj);
+      }
     } catch (e) {
       console.error('Erro ao buscar status de cobrança', e);
     } finally {
@@ -46,9 +50,13 @@ export default function DashboardLayout({
   };
 
   const handleSubscribe = async () => {
+    if (!cnpjInput.trim()) {
+      toast.error('Por favor, informe o CPF ou CNPJ da clínica para realizar o pagamento.');
+      return;
+    }
     setCheckoutLoading(true);
     try {
-      const { data } = await api.post('/billing/checkout');
+      const { data } = await api.post('/billing/checkout', { cnpj: cnpjInput });
       if (data.checkoutUrl) {
         window.open(data.checkoutUrl, '_blank');
         toast.success('Abri o link de pagamento do Asaas em uma nova guia!');
@@ -113,6 +121,20 @@ export default function DashboardLayout({
                 R$ {billing?.totalPrice ? billing.totalPrice.toFixed(2).replace('.', ',') : '49,90'}
               </span>
             </div>
+          </div>
+
+          <div className="text-left space-y-1.5 w-full">
+            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              CNPJ ou CPF da Clínica *
+            </label>
+            <input
+              type="text"
+              value={cnpjInput}
+              onChange={e => setCnpjInput(e.target.value)}
+              placeholder="Ex: 00.000.000/0000-00 ou 000.000.000-00"
+              className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <p className="text-[9px] text-slate-400">Obrigatório para emissão da fatura pelo Asaas.</p>
           </div>
 
           <button 

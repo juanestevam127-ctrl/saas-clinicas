@@ -25,16 +25,29 @@ export async function POST(req: NextRequest) {
     if (!cid) return err('clinica_id obrigatório', 401);
     if (!ASAAS_API_KEY) return err('Chave de API do Asaas não configurada no servidor', 500);
 
+    const { cnpj } = await req.json().catch(() => ({}));
+
     const db = getSupabase();
 
     // 1. Obter clínica e dados do plano
     const { data: clinica, error: clinicaError } = await db
       .from(TABLES.clinicas as any)
-      .select('nome, plano_status, plano_expira_em, asaas_customer_id, asaas_subscription_id')
+      .select('nome, cnpj, plano_status, plano_expira_em, asaas_customer_id, asaas_subscription_id')
       .eq('id', cid)
       .single();
 
     if (clinicaError || !clinica) return err('Clínica não encontrada', 404);
+
+    // Se veio CNPJ no payload, salvar no banco e atualizar variável local
+    if (cnpj) {
+      await db.from(TABLES.clinicas as any).update({ cnpj }).eq('id', cid);
+      (clinica as any).cnpj = cnpj;
+    }
+
+    const finalCnpj = (clinica as any).cnpj;
+    if (!finalCnpj) {
+      return err('CPF ou CNPJ é obrigatório para gerar a assinatura. Por favor, informe-o.');
+    }
 
     // 2. Obter profissionais e email do admin
     const { data: profissionais } = await db
@@ -69,6 +82,7 @@ export async function POST(req: NextRequest) {
         const customerResp = await axios.post(`${ASAAS_API_URL}/customers`, {
           name: clinica.nome,
           email: adminEmail,
+          cpfCnpj: finalCnpj.replace(/\D/g, ''), // Enviar apenas números
         }, { headers });
         asaasCustomerId = customerResp.data.id;
 

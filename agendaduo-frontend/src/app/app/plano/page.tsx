@@ -9,6 +9,7 @@ export default function PlanoPage() {
   const [billing, setBilling] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [cnpjInput, setCnpjInput] = useState('');
 
   useEffect(() => {
     fetchBillingStatus();
@@ -18,6 +19,9 @@ export default function PlanoPage() {
     try {
       const { data } = await api.get('/billing/status');
       setBilling(data);
+      if (data.clinica?.cnpj) {
+        setCnpjInput(data.clinica.cnpj);
+      }
     } catch (e) {
       toast.error('Erro ao carregar dados do plano.');
     } finally {
@@ -26,9 +30,13 @@ export default function PlanoPage() {
   };
 
   const handleSubscribe = async () => {
+    if (!cnpjInput.trim()) {
+      toast.error('Por favor, informe o CPF ou CNPJ da clínica.');
+      return;
+    }
     setCheckoutLoading(true);
     try {
-      const { data } = await api.post('/billing/checkout');
+      const { data } = await api.post('/billing/checkout', { cnpj: cnpjInput });
       if (data.checkoutUrl) {
         window.open(data.checkoutUrl, '_blank');
         toast.success('Redirecionando para o portal de faturamento Asaas!');
@@ -146,9 +154,21 @@ export default function PlanoPage() {
       <div className="bg-white border rounded-3xl p-6 lg:p-8 shadow-xl shadow-slate-200/50">
         <div className="max-w-xl space-y-6">
           <h3 className="text-xl font-bold text-slate-900">Gerenciar Faturamento</h3>
-          <p className="text-slate-500 text-sm leading-relaxed">
-            Nós utilizamos o **Asaas** como gateway oficial de pagamentos. Ao clicar abaixo, você será redirecionado para a nossa fatura de assinatura para escolher pagar por Cartão de Crédito, PIX ou Boleto Bancário.
-          </p>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                CNPJ ou CPF da Clínica *
+              </label>
+              <input
+                type="text"
+                value={cnpjInput}
+                onChange={e => setCnpjInput(e.target.value)}
+                placeholder="Ex: 00.000.000/0000-00 ou 000.000.000-00"
+                className="w-full max-w-sm px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">O Asaas exige o preenchimento de um CPF ou CNPJ válido para gerar a assinatura.</p>
+            </div>
+          </div>
 
           <button
             onClick={handleSubscribe}
