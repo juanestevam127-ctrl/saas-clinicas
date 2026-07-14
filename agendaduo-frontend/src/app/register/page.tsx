@@ -33,6 +33,9 @@ export default function RegisterPage() {
       localStorage.setItem('agendaduo_logged_role', data.role);
       localStorage.setItem('agendaduo_user_role', data.role);
       localStorage.setItem('agendaduo_user_profissional_id', data.profissionalId || '');
+      if (data.role === 'admin') {
+        localStorage.setItem('agendaduo_admin_profissional_id', data.profissionalId || '');
+      }
       localStorage.setItem('agendaduo_clinica_id', data.clinicaId);
       localStorage.setItem('agendaduo_user_name', data.nome || 'Usuário');
       if (data.trialEndsAt) localStorage.setItem('agendaduo_trial_ends_at', data.trialEndsAt);

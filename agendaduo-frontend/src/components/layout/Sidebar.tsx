@@ -32,9 +32,17 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
   useEffect(() => {
     const savedLoggedRole = (localStorage.getItem('agendaduo_logged_role') as 'admin' | 'profissional') || 'admin';
     const savedRole = (localStorage.getItem('agendaduo_user_role') as 'admin' | 'profissional') || 'admin';
-    const savedProfId = localStorage.getItem('agendaduo_user_profissional_id') || '';
+    let savedProfId = localStorage.getItem('agendaduo_user_profissional_id') || '';
     const savedAdminName = localStorage.getItem('agendaduo_user_name') || 'Clínica';
     const savedAdminSpec = localStorage.getItem('agendaduo_user_especialidade') || '-';
+    
+    if (savedRole === 'admin') {
+      const adminProfId = localStorage.getItem('agendaduo_admin_profissional_id') || '';
+      if (adminProfId && !savedProfId) {
+        savedProfId = adminProfId;
+        localStorage.setItem('agendaduo_user_profissional_id', adminProfId);
+      }
+    }
     
     setLoggedRole(savedLoggedRole);
     setUserRole(savedRole);
@@ -45,6 +53,26 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
     // Carrega profissionais cadastrados para o seletor de perfil
     api.get('/profissionais').then(res => {
       setProfissionais(res.data);
+      
+      // Auto-detectar e restaurar o ID profissional do administrador se estiver faltando
+      const adminProfId = localStorage.getItem('agendaduo_admin_profissional_id');
+      if (!adminProfId && res.data?.length > 0) {
+        const adminNameLower = savedAdminName.toLowerCase();
+        // Tenta achar pelo nome correspondente, senão cai no primeiro cadastrado
+        const match = res.data.find((p: any) => 
+          p.nome.toLowerCase().includes(adminNameLower) || 
+          adminNameLower.includes(p.nome.toLowerCase())
+        );
+        const bestId = match?.id || res.data[0].id;
+        localStorage.setItem('agendaduo_admin_profissional_id', bestId);
+        
+        const currentRole = localStorage.getItem('agendaduo_user_role') || 'admin';
+        if (currentRole === 'admin') {
+          localStorage.setItem('agendaduo_user_profissional_id', bestId);
+          setSelectedProfissionalId(bestId);
+          window.dispatchEvent(new Event('auth-profile-changed'));
+        }
+      }
     }).catch(() => {});
 
     // Escuta evento de mudança de perfil externamente se houver
@@ -61,13 +89,17 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
   }, []);
 
   const handleRoleChange = (role: 'admin' | 'profissional', profId: string = '') => {
+    let targetProfId = profId;
+    if (role === 'admin') {
+      targetProfId = localStorage.getItem('agendaduo_admin_profissional_id') || '';
+    }
     localStorage.setItem('agendaduo_user_role', role);
-    localStorage.setItem('agendaduo_user_profissional_id', profId);
+    localStorage.setItem('agendaduo_user_profissional_id', targetProfId);
     setUserRole(role);
-    setSelectedProfissionalId(profId);
+    setSelectedProfissionalId(targetProfId);
     window.dispatchEvent(new Event('auth-profile-changed'));
     
-    const profName = profissionais.find(p => p.id === profId)?.nome || 'Profissional';
+    const profName = profissionais.find(p => p.id === targetProfId)?.nome || 'Profissional';
     toast.success(`Visualizando como: ${role === 'admin' ? 'Administrador' : profName}`);
   };
 
