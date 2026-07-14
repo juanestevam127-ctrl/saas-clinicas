@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
 
       const paymentsResp = await axios.get(`${ASAAS_API_URL}/payments?subscription=${asaasSubscriptionId}`, { headers });
       const payments = paymentsResp.data?.data || [];
-      const pendingPayment = payments.find((p: any) => p.status === 'PENDING');
+      const pendingPayment = payments.find((p: any) => p.status === 'PENDING' || p.status === 'OVERDUE');
       if (pendingPayment) {
         checkoutUrl = pendingPayment.invoiceUrl;
       } else if (payments.length > 0) {
