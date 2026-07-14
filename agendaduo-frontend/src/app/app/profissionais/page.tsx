@@ -37,7 +37,7 @@ function getInitials(name: string) {
   return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
 }
 
-const MAX_PROFISSIONAIS = 5;
+const MAX_PROFISSIONAIS = 3;
 
 // Decodificador de metadados da bio
 function parseBioMetadata(bioStr: string | null) {
@@ -212,27 +212,21 @@ export default function ProfissionaisPage() {
           <p className="text-slate-500 mt-1 text-sm">
             {profissionais.filter(p => p.ativo).length} profissionais ativos
             <span className={`ml-2 text-xs font-medium px-2 py-0.5 rounded-full ${
-              profissionais.length >= MAX_PROFISSIONAIS
-                ? 'bg-red-50 text-red-600'
+              profissionais.length > MAX_PROFISSIONAIS
+                ? 'bg-blue-50 text-blue-600 border border-blue-200'
                 : 'bg-slate-100 text-slate-500'
             }`}>
-              {profissionais.length}/{MAX_PROFISSIONAIS} vagas
+              {profissionais.length}/{MAX_PROFISSIONAIS} vagas {profissionais.length > MAX_PROFISSIONAIS ? `(+${profissionais.length - MAX_PROFISSIONAIS} extras)` : ''}
             </span>
           </p>
         </div>
-        {profissionais.length < MAX_PROFISSIONAIS ? (
-          <button
-            onClick={openNewModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-          >
-            <Plus className="w-4 h-4" />
-            Novo Profissional
-          </button>
-        ) : (
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 text-sm font-semibold rounded-xl border border-red-200">
-            Limite de {MAX_PROFISSIONAIS} atingido
-          </div>
-        )}
+        <button
+          onClick={openNewModal}
+          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+        >
+          <Plus className="w-4 h-4" />
+          Novo Profissional
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -380,6 +374,11 @@ export default function ProfissionaisPage() {
             <DialogTitle>{editingId ? 'Editar Profissional' : 'Novo Profissional'}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+            {!editingId && profissionais.length >= MAX_PROFISSIONAIS && (
+              <div className="p-3.5 bg-blue-50 border border-blue-100 text-blue-800 rounded-2xl text-xs space-y-1">
+                <span className="font-bold">Aviso de cobrança:</span> O plano básico inclui até 3 profissionais. Adicionar este profissional custará um valor adicional de <strong>R$ 19,90/mês</strong>.
+              </div>
+            )}
             <div className="space-y-2">
               <Label>Nome Completo *</Label>
               <Input

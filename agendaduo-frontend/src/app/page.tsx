@@ -77,8 +77,8 @@ export default function LandingPage() {
             />
             <FeatureCard 
               icon={Calendar} 
-              title="Até 5 Profissionais" 
-              desc="Gerencie agendas simultâneas com perfis individuais de acesso." 
+              title="Inclui 3 Profissionais" 
+              desc="Gerencie agendas simultâneas. Profissionais adicionais por R$ 19,90/mês." 
             />
             <FeatureCard 
               icon={Activity} 
@@ -196,13 +196,13 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-3xl font-bold text-slate-900">Profissionais e Pacientes</h3>
                 <p className="text-lg text-slate-600 leading-relaxed">
-                  O sistema atende perfeitamente sua clínica: cadastre até 5 profissionais (cada um com visão independente de agendas e financeiro) e pacientes ilimitados com todos os dados essenciais armazenados de forma segura.
+                  O sistema atende perfeitamente sua clínica: cadastre até 3 profissionais inclusos no plano básico (cada um com visão independente de agendas e financeiro) e adicione mais por apenas R$ 19,90/mês cada.
                 </p>
               </div>
               <div className="flex-1 w-full flex gap-4">
                 <div className="flex-1 bg-white rounded-3xl p-6 border shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center text-center gap-2">
-                  <div className="text-4xl font-black text-purple-600">5</div>
-                  <div className="text-sm font-semibold text-slate-600">Vagas de Profissionais</div>
+                  <div className="text-4xl font-black text-purple-600">3</div>
+                  <div className="text-sm font-semibold text-slate-600">Vagas Inclusas</div>
                 </div>
                 <div className="flex-1 bg-white rounded-3xl p-6 border shadow-xl shadow-slate-200/50 flex flex-col items-center justify-center text-center gap-2">
                   <div className="text-4xl font-black text-blue-600">∞</div>

@@ -16,6 +16,9 @@ export async function POST(req: NextRequest) {
     const { data: authData, error: authError } = await db.auth.signUp({ email, password: senha });
     if (authError) return err(authError.message);
 
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
     const { data: clinica, error: clinicaError } = await db
       .from(TABLES.clinicas as any)
       .insert({
@@ -23,14 +26,13 @@ export async function POST(req: NextRequest) {
         n8n_webhook_url: process.env.DEFAULT_N8N_WEBHOOK_URL || null,
         evolution_api_url: process.env.DEFAULT_EVOLUTION_API_URL || null,
         evolution_api_key: process.env.DEFAULT_EVOLUTION_API_KEY || null,
+        plano_status: 'trial',
+        plano_expira_em: trialEndsAt.toISOString(),
       })
       .select('*')
       .single();
 
     if (clinicaError || !clinica) return err('Erro ao criar clínica: ' + clinicaError?.message);
-
-    const trialEndsAt = new Date();
-    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
     const bioPayload = JSON.stringify({
       role: 'admin',

@@ -33,12 +33,19 @@ export async function POST(req: NextRequest) {
     let parsedMeta: any = {};
     try { parsedMeta = JSON.parse(prof.bio || '{}'); } catch {}
 
+    const { data: clinica } = await db
+      .from(TABLES.clinicas as any)
+      .select('plano_expira_em, plano_status')
+      .eq('id', prof.clinica_id)
+      .single();
+
     return NextResponse.json({
       role: parsedMeta.role === 'admin' ? 'admin' : 'profissional',
       clinicaId: prof.clinica_id,
       profissionalId: prof.id,
       nome: prof.nome,
-      trialEndsAt: parsedMeta.trialEndsAt || null,
+      trialEndsAt: (clinica as any)?.plano_expira_em || parsedMeta.trialEndsAt || null,
+      planoStatus: (clinica as any)?.plano_status || 'trial',
     });
   } catch (e: any) {
     return err(e.message, 500);
