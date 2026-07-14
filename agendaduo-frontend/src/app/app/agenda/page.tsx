@@ -24,6 +24,7 @@ type Consulta = {
   dataHoraInicio: string;
   dataHoraFim: string;
   status: 'agendado' | 'confirmado' | 'realizado' | 'cancelado';
+  googleEventId?: string;
 };
 
 const statusConfig: Record<string, any> = {
@@ -518,10 +519,12 @@ export default function AgendaPage() {
                   const d = new Date(c.dataHoraInicio);
                   return d.toDateString() === date.toDateString() && d.getHours() === hour;
                 });
-                const dayGoogleEvents = googleEvents.filter(e => {
-                  const d = new Date(e.start);
-                  return d.toDateString() === date.toDateString() && d.getHours() === hour;
-                });
+                const dayGoogleEvents = googleEvents
+                  .filter(e => !consultas.some(c => c.googleEventId === e.id))
+                  .filter(e => {
+                    const d = new Date(e.start);
+                    return d.toDateString() === date.toDateString() && d.getHours() === hour;
+                  });
                 const isToday = date.toDateString() === todayStr;
                 const isSelected = date.toDateString() === currentDateStr;
 
