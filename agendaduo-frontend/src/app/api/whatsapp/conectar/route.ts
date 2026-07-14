@@ -31,11 +31,13 @@ export async function POST(req: NextRequest) {
         { headers }
       );
       const data = response.data;
+      const resData = Array.isArray(data) ? data[0] : data;
+
       return NextResponse.json({
-        instanceName: data.instance?.instanceName ?? instanceName,
-        status: data.instance?.status ?? 'connecting',
-        qrcode: data.qrcode?.base64 ?? null,
-        hash: data.hash ?? null,
+        instanceName: resData.instance?.instanceName ?? instanceName,
+        status: resData.instance?.status ?? 'connecting',
+        qrcode: resData.qrcode?.base64 ?? null,
+        hash: resData.hash ?? null,
       });
     } catch (error: any) {
       const msg = error.response?.data?.message || error.response?.data?.error || error.message;
