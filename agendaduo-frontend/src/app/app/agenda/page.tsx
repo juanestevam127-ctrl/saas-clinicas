@@ -479,107 +479,114 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        {/* Week Header */}
-        <div className="grid grid-cols-8 border-b bg-slate-50/30">
-          <div className="py-3 px-2 text-xs text-slate-400 font-medium text-center">Hora</div>
-          {weekDates.map((date, i) => {
-            const isToday = date.toDateString() === todayStr;
-            const isSelected = date.toDateString() === currentDateStr;
-            return (
-              <div 
-                key={i} 
-                onClick={() => {
-                  setCurrentDate(date);
-                  setView('dia');
-                }}
-                className={`py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors ${view === 'dia' && !isSelected ? 'hidden' : ''}`}
-              >
-                <div className={`text-xs font-medium ${isToday ? 'text-blue-600' : 'text-slate-500'}`}>
-                  {DAYS[i]}
-                </div>
-                <div className={`text-lg font-bold mt-0.5 w-8 h-8 mx-auto flex items-center justify-center rounded-full ${
-                  isToday ? 'bg-blue-600 text-white' : 'text-slate-700'
-                }`}>
-                  {date.getDate()}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Time Grid */}
-        <div className="overflow-y-auto max-h-[500px]">
-          {HOURS.map((hour) => (
-            <div key={hour} className="grid grid-cols-8 border-b last:border-0 hover:bg-slate-50/30 group">
-              <div className="py-3 px-3 text-xs text-slate-400 font-medium text-right sticky left-0 bg-white border-r">
-                {String(hour).padStart(2, '0')}:00
-              </div>
-              {weekDates.map((date, dayIdx) => {
-                const dayConsultas = viewableConsultas.filter(c => {
-                  const d = new Date(c.dataHoraInicio);
-                  return d.toDateString() === date.toDateString() && d.getHours() === hour;
-                });
-                const dayGoogleEvents = googleEvents
-                  .filter(e => !consultas.some(c => c.googleEventId === e.id))
-                  .filter(e => {
-                    const d = new Date(e.start);
-                    return d.toDateString() === date.toDateString() && d.getHours() === hour;
-                  });
+        {/* Scrollable Wrapper */}
+        <div className="overflow-x-auto">
+          <div className={`${view === 'semana' ? 'min-w-[800px]' : 'min-w-0'} w-full`}>
+            
+            {/* Week Header */}
+            <div className="grid grid-cols-8 border-b bg-slate-50/30">
+              <div className="py-3 px-2 text-xs text-slate-400 font-medium text-center">Hora</div>
+              {weekDates.map((date, i) => {
                 const isToday = date.toDateString() === todayStr;
                 const isSelected = date.toDateString() === currentDateStr;
-
                 return (
-                  <div key={dayIdx} className={`border-r last:border-0 py-1 px-1 min-h-[52px] relative transition-colors ${view === 'dia' && !isSelected ? 'hidden' : ''}`}>
-                    {dayConsultas.map((c) => {
-                      const sc = statusConfig[c.status] || statusConfig.agendado;
-                      const inicio = new Date(c.dataHoraInicio);
-                      const fim = new Date(c.dataHoraFim);
-                      const duracao = (fim.getTime() - inicio.getTime()) / 60000;
-
-                      return (
-                        <div
-                          key={c.id}
-                          onClick={() => { setSelectedConsulta(c); setIsDetailsOpen(true); }}
-                          className={`${sc.bg} ${sc.border} border rounded-lg px-2 py-1.5 text-xs cursor-pointer hover:shadow-sm transition-all mb-1`}
-                        >
-                          <div className={`font-semibold ${sc.text} truncate`}>{c.paciente.nome}</div>
-                          <div className="text-slate-500 truncate flex items-center gap-1 mt-0.5">
-                            <Clock className="w-2.5 h-2.5 shrink-0" />
-                            {inicio.getHours().toString().padStart(2, '0')}:{inicio.getMinutes().toString().padStart(2, '0')} · {duracao}min
-                          </div>
-                          {userRole === 'admin' && (
-                            <div className="text-[10px] text-slate-400 font-medium mt-0.5 truncate border-t border-slate-100/50 pt-0.5">
-                              🩺 {c.profissional.nome}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-
-                    {dayGoogleEvents.map((e) => {
-                      const startT = new Date(e.start);
-                      const endT = new Date(e.end);
-                      const dur = (endT.getTime() - startT.getTime()) / 60000;
-                      return (
-                        <div
-                          key={e.id}
-                          className="bg-slate-100 border-slate-200 border text-slate-600 rounded-lg px-2 py-1.5 text-xs mb-1 select-none hover:shadow-sm"
-                          title={e.title}
-                        >
-                          <div className="font-semibold text-slate-700 truncate flex items-center gap-1">
-                            📅 {e.title}
-                          </div>
-                          <div className="text-[10px] text-slate-400 mt-0.5">
-                            {startT.getHours().toString().padStart(2, '0')}:{startT.getMinutes().toString().padStart(2, '0')} · {dur}min
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div 
+                    key={i} 
+                    onClick={() => {
+                      setCurrentDate(date);
+                      setView('dia');
+                    }}
+                    className={`py-3 text-center cursor-pointer hover:bg-slate-100 transition-colors ${view === 'dia' && !isSelected ? 'hidden' : ''}`}
+                  >
+                    <div className={`text-xs font-medium ${isToday ? 'text-blue-600' : 'text-slate-500'}`}>
+                      {DAYS[i]}
+                    </div>
+                    <div className={`text-lg font-bold mt-0.5 w-8 h-8 mx-auto flex items-center justify-center rounded-full ${
+                      isToday ? 'bg-blue-600 text-white' : 'text-slate-700'
+                    }`}>
+                      {date.getDate()}
+                    </div>
                   </div>
                 );
               })}
             </div>
-          ))}
+
+            {/* Time Grid */}
+            <div className="overflow-y-auto max-h-[500px]">
+              {HOURS.map((hour) => (
+                <div key={hour} className="grid grid-cols-8 border-b last:border-0 hover:bg-slate-50/30 group">
+                  <div className="py-3 px-3 text-xs text-slate-400 font-medium text-right sticky left-0 bg-white border-r">
+                    {String(hour).padStart(2, '0')}:00
+                  </div>
+                  {weekDates.map((date, dayIdx) => {
+                    const dayConsultas = viewableConsultas.filter(c => {
+                      const d = new Date(c.dataHoraInicio);
+                      return d.toDateString() === date.toDateString() && d.getHours() === hour;
+                    });
+                    const dayGoogleEvents = googleEvents
+                      .filter(e => !consultas.some(c => c.googleEventId === e.id))
+                      .filter(e => {
+                        const d = new Date(e.start);
+                        return d.toDateString() === date.toDateString() && d.getHours() === hour;
+                      });
+                    const isToday = date.toDateString() === todayStr;
+                    const isSelected = date.toDateString() === currentDateStr;
+
+                    return (
+                      <div key={dayIdx} className={`border-r last:border-0 py-1 px-1 min-h-[52px] relative transition-colors ${view === 'dia' && !isSelected ? 'hidden' : ''}`}>
+                        {dayConsultas.map((c) => {
+                          const sc = statusConfig[c.status] || statusConfig.agendado;
+                          const inicio = new Date(c.dataHoraInicio);
+                          const fim = new Date(c.dataHoraFim);
+                          const duracao = (fim.getTime() - inicio.getTime()) / 60000;
+
+                          return (
+                            <div
+                              key={c.id}
+                              onClick={() => { setSelectedConsulta(c); setIsDetailsOpen(true); }}
+                              className={`${sc.bg} ${sc.border} border rounded-lg px-2 py-1.5 text-xs cursor-pointer hover:shadow-sm transition-all mb-1`}
+                            >
+                              <div className={`font-semibold ${sc.text} truncate`}>{c.paciente.nome}</div>
+                              <div className="text-slate-500 truncate flex items-center gap-1 mt-0.5">
+                                <Clock className="w-2.5 h-2.5 shrink-0" />
+                                {inicio.getHours().toString().padStart(2, '0')}:{inicio.getMinutes().toString().padStart(2, '0')} · {duracao}min
+                              </div>
+                              {userRole === 'admin' && (
+                                <div className="text-[10px] text-slate-400 font-medium mt-0.5 truncate border-t border-slate-100/50 pt-0.5">
+                                  🩺 {c.profissional.nome}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+
+                        {dayGoogleEvents.map((e) => {
+                          const startT = new Date(e.start);
+                          const endT = new Date(e.end);
+                          const dur = (endT.getTime() - startT.getTime()) / 60000;
+                          return (
+                            <div
+                              key={e.id}
+                              className="bg-slate-100 border-slate-200 border text-slate-600 rounded-lg px-2 py-1.5 text-xs mb-1 select-none hover:shadow-sm"
+                              title={e.title}
+                            >
+                              <div className="font-semibold text-slate-700 truncate flex items-center gap-1">
+                                📅 {e.title}
+                              </div>
+                              <div className="text-[10px] text-slate-400 mt-0.5">
+                                {startT.getHours().toString().padStart(2, '0')}:{startT.getMinutes().toString().padStart(2, '0')} · {dur}min
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+          </div>
         </div>
       </div>
 
