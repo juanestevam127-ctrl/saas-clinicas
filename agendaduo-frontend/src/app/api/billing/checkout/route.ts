@@ -146,6 +146,9 @@ export async function POST(req: NextRequest) {
 
     // 5. Buscar a fatura/pagamento pendente para esta assinatura para obter o link de checkout
     try {
+      // Pequeno delay para garantir que o Asaas gerou a fatura da assinatura em segundo plano
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
       const paymentsResp = await axios.get(`${ASAAS_API_URL}/payments?subscription=${asaasSubscriptionId}`, { headers });
       const payments = paymentsResp.data?.data || [];
       const pendingPayment = payments.find((p: any) => p.status === 'PENDING');
@@ -159,7 +162,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!checkoutUrl) {
-      checkoutUrl = `https://www.asaas.com/assinatura/detalhes/${asaasSubscriptionId}`;
+      return err('Nenhuma fatura pendente foi encontrada para esta assinatura no Asaas no momento. Aguarde alguns segundos para o processamento e clique em Assinar Novamente.');
     }
 
     return NextResponse.json({
