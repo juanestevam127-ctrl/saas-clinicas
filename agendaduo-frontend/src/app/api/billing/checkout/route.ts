@@ -115,6 +115,22 @@ export async function POST(req: NextRequest) {
       ? expDate.toISOString().split('T')[0] 
       : new Date(today.setDate(today.getDate() + 1)).toISOString().split('T')[0];
 
+    if (asaasSubscriptionId) {
+      // Atualizar o valor se mudou por conta do número de profissionais
+      try {
+        await axios.post(`${ASAAS_API_URL}/subscriptions/${asaasSubscriptionId}`, {
+          value: totalPrice,
+          description: `Assinatura Mensal AgendaDuo - ${profCount} profissionais`,
+        }, { headers });
+      } catch (e: any) {
+        if (e.response?.status === 404) {
+          // A assinatura foi excluída no Asaas. Limpar do banco de dados para criar uma nova abaixo
+          await db.from(TABLES.clinicas as any).update({ asaas_subscription_id: null }).eq('id', cid);
+          asaasSubscriptionId = null;
+        }
+      }
+    }
+
     if (!asaasSubscriptionId) {
       try {
         const subResp = await axios.post(`${ASAAS_API_URL}/subscriptions`, {
@@ -134,14 +150,6 @@ export async function POST(req: NextRequest) {
         const msg = e.response?.data?.errors?.[0]?.description || e.message;
         return err('Erro ao criar assinatura no Asaas: ' + msg, 500);
       }
-    } else {
-      // Atualizar o valor se mudou por conta do número de profissionais
-      try {
-        await axios.post(`${ASAAS_API_URL}/subscriptions/${asaasSubscriptionId}`, {
-          value: totalPrice,
-          description: `Assinatura Mensal AgendaDuo - ${profCount} profissionais`,
-        }, { headers });
-      } catch {}
     }
 
     // 5. Buscar a fatura/pagamento pendente para esta assinatura para obter o link de checkout
