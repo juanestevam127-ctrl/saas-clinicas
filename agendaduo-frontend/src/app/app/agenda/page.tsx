@@ -83,6 +83,8 @@ export default function AgendaPage() {
   // Perfil de acesso/visualização
   const [userRole, setUserRole] = useState<'admin' | 'profissional'>('admin');
   const [selectedProfissionalId, setSelectedProfissionalId] = useState<string>('');
+  const [currentProfData, setCurrentProfData] = useState<any>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,6 +119,16 @@ export default function AgendaPage() {
   useEffect(() => {
     fetchData();
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const googleStatus = urlParams.get('google_status');
+    if (googleStatus === 'success') {
+      toast.success('Google Agenda vinculada com sucesso!');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (googleStatus === 'error' || googleStatus === 'server_error') {
+      toast.error('Erro ao vincular Google Agenda.');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     const handleProfileChange = () => {
       const role = (localStorage.getItem('agendaduo_user_role') as any) || 'admin';
       const profId = localStorage.getItem('agendaduo_user_profissional_id') || '';
@@ -126,12 +138,61 @@ export default function AgendaPage() {
       if (role === 'profissional') {
         setFormData(prev => ({ ...prev, profissionalId: profId }));
       }
+
+      if (profId) {
+        api.get(`/profissionais/${profId}`)
+          .then(res => setCurrentProfData(res.data))
+          .catch(console.error);
+      } else {
+        setCurrentProfData(null);
+      }
     };
 
     handleProfileChange();
     window.addEventListener('auth-profile-changed', handleProfileChange);
     return () => window.removeEventListener('auth-profile-changed', handleProfileChange);
   }, []);
+
+  const handleGoogleConnect = async () => {
+    const profId = localStorage.getItem('agendaduo_user_profissional_id');
+    if (!profId) return toast.error('Nenhum profissional selecionado');
+
+    setGoogleLoading(true);
+    try {
+      const { data } = await api.get(`/auth/google/url?profissionalId=${profId}`);
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (e) {
+      toast.error('Erro ao conectar ao Google Agenda');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleDisconnect = async () => {
+    const profId = localStorage.getItem('agendaduo_user_profissional_id');
+    if (!profId) return toast.error('Nenhum profissional selecionado');
+
+    if (!confirm('Tem certeza que deseja desconectar seu Google Agenda?')) return;
+
+    setGoogleLoading(true);
+    try {
+      await api.post(`/auth/google/disconnect?profissionalId=${profId}`);
+      toast.success('Google Agenda desconectada com sucesso!');
+      if (currentProfData) {
+        setCurrentProfData({
+          ...currentProfData,
+          googleAccessToken: null,
+          googleCalendarId: null,
+        });
+      }
+    } catch (e) {
+      toast.error('Erro ao desconectar Google Agenda');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -322,13 +383,36 @@ export default function AgendaPage() {
               : 'Visualizando apenas os seus agendamentos'}
           </p>
         </div>
-        <button
-          onClick={handleOpenNewModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-        >
-          <Plus className="w-4 h-4" />
-          Novo Agendamento
-        </button>
+        <div className="flex items-center gap-2">
+          {currentProfData && (
+            currentProfData.googleAccessToken ? (
+              <button
+                onClick={handleGoogleDisconnect}
+                disabled={googleLoading}
+                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold rounded-xl border border-emerald-200 transition-colors cursor-pointer"
+                title="Google Agenda Conectada. Clique para desconectar."
+              >
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Google Agenda Ativa
+              </button>
+            ) : (
+              <button
+                onClick={handleGoogleConnect}
+                disabled={googleLoading}
+                className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold rounded-xl border border-slate-200 transition-colors cursor-pointer"
+              >
+                Vincular Google Agenda
+              </button>
+            )
+          )}
+          <button
+            onClick={handleOpenNewModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Novo Agendamento
+          </button>
+        </div>
       </div>
 
       {/* Calendar Controls */}

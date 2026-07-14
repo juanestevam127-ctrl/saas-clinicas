@@ -126,6 +126,15 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ id: str
       .single();
 
     if (error) return err(error.message, 500);
+
+    // Sincronizar com o Google Calendar em segundo plano
+    try {
+      const { syncEventToGoogle } = await import('@/lib/google-calendar');
+      syncEventToGoogle(data.id).catch(console.error);
+    } catch (errSync) {
+      console.error('Falha ao carregar utilitários do Google:', errSync);
+    }
+
     return NextResponse.json(toCamelCase(data));
   } catch (e: any) { return err(e.message, 500); }
 }
@@ -155,6 +164,17 @@ export async function DELETE(req: NextRequest, props: { params: Promise<{ id: st
 
     if (error) return err(error.message, 500);
     if (!data) return err('Consulta não encontrada ou já excluída.', 404);
+
+    // Remover do Google Calendar em segundo plano
+    if (data.google_event_id) {
+      try {
+        const { deleteEventFromGoogle } = await import('@/lib/google-calendar');
+        deleteEventFromGoogle(data.profissional_id, data.google_event_id).catch(console.error);
+      } catch (errSync) {
+        console.error('Falha ao carregar utilitários do Google:', errSync);
+      }
+    }
+
     return NextResponse.json(toCamelCase(data));
   } catch (e: any) { return err(e.message, 500); }
 }

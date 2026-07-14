@@ -115,6 +115,15 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) return err(error.message, 500);
+
+    // Sincronizar com o Google Calendar em segundo plano
+    try {
+      const { syncEventToGoogle } = await import('@/lib/google-calendar');
+      syncEventToGoogle(result.id).catch(console.error);
+    } catch (errSync) {
+      console.error('Falha ao carregar utilitários do Google:', errSync);
+    }
+
     return NextResponse.json(toCamelCase(result), { status: 201 });
   } catch (e: any) { return err(e.message, 500); }
 }
