@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     const { data: clinicas } = await db
       .from(TABLES.clinicas)
-      .select('id, nome, lembrete_aniversario_horario')
+      .select('id, nome, lembrete_aniversario_horario, msg_aniversario')
       .eq('lembrete_aniversario_ativo', true)
       .eq('lembrete_aniversario_horario', currentHourMin);
 
@@ -29,6 +29,13 @@ export async function GET(req: NextRequest) {
     }
 
     const processed = [];
+    const DEFAULT_MSG_ANIVERSARIO = `🎉 Feliz aniversário, {{nome_paciente}}!
+
+Toda a equipe da {{nome_clinica}} deseja que o seu dia seja repleto de alegria, saúde e muitos momentos especiais.
+
+Obrigado por confiar em nosso trabalho. Esperamos continuar cuidando de você sempre que precisar.
+
+Parabéns e muitas felicidades! 🎂💙`;
 
     for (const clinica of clinicas) {
       // Obter pacientes com data_nascimento
@@ -67,6 +74,17 @@ export async function GET(req: NextRequest) {
 
       for (const paciente of aniversariantes) {
         try {
+          const template = clinica.msg_aniversario || DEFAULT_MSG_ANIVERSARIO;
+          const variables: Record<string, string> = {
+            nome_paciente: paciente.nome || '',
+            nome_clinica: clinica.nome || '',
+          };
+
+          let compiledMsg = template;
+          for (const [key, val] of Object.entries(variables)) {
+            compiledMsg = compiledMsg.replaceAll(`{{${key}}}`, val);
+          }
+
           const payload = {
             evento: 'lembrete_aniversario',
             clinica_id: clinica.id,
@@ -75,6 +93,7 @@ export async function GET(req: NextRequest) {
             paciente_telefone: paciente.telefone,
             instancia_whatsapp: instName,
             data_aniversario: paciente.data_nascimento,
+            mensagem: compiledMsg,
           };
 
           const webhookUrl = process.env.DEFAULT_N8N_WEBHOOK_ANIVERSARIO_URL || 'https://criadordigital-n8n-webhook.5rqumh.easypanel.host/webhook/lembretes-aniversario-clinicas';

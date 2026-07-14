@@ -29,6 +29,44 @@ const defaultHorarios: HorarioConfig[] = [
   { ativo: false, inicio: '08:00', fim: '12:00' }, // Sab
 ];
 
+const defaultMsgPresencial = `Olá, {{nome_paciente}}! 😊
+
+Este é um lembrete de que sua consulta está confirmada.
+
+📅 Data: {{data_consulta}}
+🕒 Horário: {{horario_consulta}}
+👨‍⚕️ Profissional: {{nome_profissional}}
+📍 Endereço: {{endereco_consultorio}}
+
+Se possível, chegue com alguns minutos de antecedência.
+
+Caso precise reagendar ou tenha alguma dúvida, basta responder esta mensagem.
+
+A equipe da {{nome_clinica}} espera por você!`;
+
+const defaultMsgOnline = `Olá, {{nome_paciente}}! 😊
+
+Este é um lembrete de que sua consulta online está confirmada.
+
+📅 Data: {{data_consulta}}
+🕒 Horário: {{horario_consulta}}
+👨‍⚕️ Profissional: {{nome_profissional}}
+💻 Link da reunião: {{link_reuniao}}
+
+Recomendamos acessar o link alguns minutos antes do horário marcado para garantir que tudo esteja funcionando corretamente.
+
+Se precisar de ajuda ou desejar reagendar, é só responder esta mensagem.
+
+Até breve!`;
+
+const defaultMsgAniversario = `🎉 Feliz aniversário, {{nome_paciente}}!
+
+Toda a equipe da {{nome_clinica}} deseja que o seu dia seja repleto de alegria, saúde e muitos momentos especiais.
+
+Obrigado por confiar em nosso trabalho. Esperamos continuar cuidando de você sempre que precisar.
+
+Parabéns e muitas felicidades! 🎂💙`;
+
 export default function ConfiguracoesPage() {
   const [activeTab, setActiveTab] = useState('clinica');
   const [horarios, setHorarios] = useState<HorarioConfig[]>(defaultHorarios);
@@ -48,6 +86,9 @@ export default function ConfiguracoesPage() {
     n8nWebhookUrl: '',
     lembreteAniversarioAtivo: false,
     lembreteAniversarioHorario: '08:00',
+    msgLembretePresencial: defaultMsgPresencial,
+    msgLembreteOnline: defaultMsgOnline,
+    msgAniversario: defaultMsgAniversario,
   });
 
   const toggleHorario = (i: number) => {
@@ -75,6 +116,9 @@ export default function ConfiguracoesPage() {
           n8nWebhookUrl: data.clinica.n8n_webhook_url || '',
           lembreteAniversarioAtivo: data.clinica.lembreteAniversarioAtivo || false,
           lembreteAniversarioHorario: data.clinica.lembreteAniversarioHorario || '08:00',
+          msgLembretePresencial: data.clinica.msgLembretePresencial || defaultMsgPresencial,
+          msgLembreteOnline: data.clinica.msgLembreteOnline || defaultMsgOnline,
+          msgAniversario: data.clinica.msgAniversario || defaultMsgAniversario,
         });
       }
       
@@ -436,6 +480,50 @@ export default function ConfiguracoesPage() {
                       />
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Modelos de Mensagem Customizados */}
+              <div className="border-t pt-5 mt-5 space-y-4">
+                <h3 className="text-sm font-semibold text-slate-800">Modelos de Mensagens (WhatsApp)</h3>
+                <p className="text-xs text-slate-500">Configure as mensagens automáticas enviadas para os seus pacientes. Use as variáveis dinâmicas disponíveis.</p>
+                
+                <div className="space-y-4">
+                  {/* Lembrete Presencial */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-600">Mensagem de Lembrete Presencial</label>
+                    <textarea
+                      value={clinica.msgLembretePresencial}
+                      onChange={e => setClinica(prev => ({ ...prev, msgLembretePresencial: e.target.value }))}
+                      rows={7}
+                      className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                    />
+                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{data_consulta}}"}</code>, <code>{"{{horario_consulta}}"}</code>, <code>{"{{nome_profissional}}"}</code>, <code>{"{{endereco_consultorio}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
+                  </div>
+
+                  {/* Lembrete Online */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-600">Mensagem de Lembrete Online</label>
+                    <textarea
+                      value={clinica.msgLembreteOnline}
+                      onChange={e => setClinica(prev => ({ ...prev, msgLembreteOnline: e.target.value }))}
+                      rows={7}
+                      className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                    />
+                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{data_consulta}}"}</code>, <code>{"{{horario_consulta}}"}</code>, <code>{"{{nome_profissional}}"}</code>, <code>{"{{link_reuniao}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
+                  </div>
+
+                  {/* Mensagem de Aniversário */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-600">Mensagem de Aniversário</label>
+                    <textarea
+                      value={clinica.msgAniversario}
+                      onChange={e => setClinica(prev => ({ ...prev, msgAniversario: e.target.value }))}
+                      rows={5}
+                      className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                    />
+                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
+                  </div>
                 </div>
               </div>
 

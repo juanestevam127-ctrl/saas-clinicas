@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     const { data: clinica, error: clinicaError } = await db
       .from(TABLES.clinicas)
-      .select('nome, cnpj, telefone, endereco, fuso_horario, horario_funcionamento, n8n_webhook_url, lembrete_aniversario_ativo, lembrete_aniversario_horario')
+      .select('nome, cnpj, telefone, endereco, fuso_horario, horario_funcionamento, n8n_webhook_url, lembrete_aniversario_ativo, lembrete_aniversario_horario, msg_lembrete_presencial, msg_lembrete_online, msg_aniversario')
       .eq('id', cid)
       .single();
 

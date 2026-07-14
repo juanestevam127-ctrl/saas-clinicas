@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     // Buscar configurações ativas com dados da clínica
     const { data: configs, error: cfgErr } = await db
       .from(TABLES.lembretesConfig)
-      .select(`*, clinica:${TABLES.clinicas}(nome, n8n_webhook_url, endereco)`)
+      .select(`*, clinica:${TABLES.clinicas}(nome, n8n_webhook_url, endereco, msg_lembrete_presencial, msg_lembrete_online)`)
       .eq('ativo', true);
 
     if (cfgErr || !configs?.length) {
@@ -23,6 +23,36 @@ export async function GET(req: NextRequest) {
     }
 
     const processed = [];
+
+    const DEFAULT_MSG_PRESENCIAL = `Olá, {{nome_paciente}}! 😊
+
+Este é um lembrete de que sua consulta está confirmada.
+
+📅 Data: {{data_consulta}}
+🕒 Horário: {{horario_consulta}}
+👨‍⚕️ Profissional: {{nome_profissional}}
+📍 Endereço: {{endereco_consultorio}}
+
+Se possível, chegue com alguns minutos de antecedência.
+
+Caso precise reagendar ou tenha alguma dúvida, basta responder esta mensagem.
+
+A equipe da {{nome_clinica}} espera por você!`;
+
+    const DEFAULT_MSG_ONLINE = `Olá, {{nome_paciente}}! 😊
+
+Este é um lembrete de que sua consulta online está confirmada.
+
+📅 Data: {{data_consulta}}
+🕒 Horário: {{horario_consulta}}
+👨‍⚕️ Profissional: {{nome_profissional}}
+💻 Link da reunião: {{link_reuniao}}
+
+Recomendamos acessar o link alguns minutos antes do horário marcado para garantir que tudo esteja funcionando corretamente.
+
+Se precisar de ajuda ou desejar reagendar, é só responder esta mensagem.
+
+Até breve!`;
 
     for (const config of configs) {
       let hours = 24;
@@ -64,6 +94,31 @@ export async function GET(req: NextRequest) {
             } catch(e){}
           }
 
+          const isOnline = consulta.tipo_atendimento === 'online';
+          const template = isOnline
+            ? (config.clinica.msg_lembrete_online || DEFAULT_MSG_ONLINE)
+            : (config.clinica.msg_lembrete_presencial || DEFAULT_MSG_PRESENCIAL);
+
+          // Formatar data e hora
+          const dt = new Date(consulta.data_hora_inicio);
+          const dataStr = dt.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+          const horaStr = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+
+          const variables: Record<string, string> = {
+            nome_paciente: consulta.paciente?.nome || '',
+            data_consulta: dataStr,
+            horario_consulta: horaStr,
+            nome_profissional: consulta.profissional?.nome || '',
+            endereco_consultorio: config.clinica.endereco || '',
+            link_reuniao: (consulta as any).link_reuniao || '',
+            nome_clinica: config.clinica.nome || '',
+          };
+
+          let compiledMsg = template;
+          for (const [key, val] of Object.entries(variables)) {
+            compiledMsg = compiledMsg.replaceAll(`{{${key}}}`, val);
+          }
+
           const payload = {
             evento: 'lembrete_consulta',
             clinica_id: config.clinica_id,
@@ -77,6 +132,7 @@ export async function GET(req: NextRequest) {
             antecedencia: config.antecedencia,
             tipo_atendimento: consulta.tipo_atendimento || 'presencial',
             endereco_clinica: (!consulta.tipo_atendimento || consulta.tipo_atendimento === 'presencial') ? config.clinica.endereco : null,
+            mensagem: compiledMsg,
           };
 
           const webhookUrl = 'https://criadordigital-n8n-webhook.5rqumh.easypanel.host/webhook/lembretes-clinicas';

@@ -25,6 +25,7 @@ type Consulta = {
   dataHoraFim: string;
   status: 'agendado' | 'confirmado' | 'realizado' | 'cancelado';
   googleEventId?: string;
+  linkReuniao?: string;
 };
 
 const statusConfig: Record<string, any> = {
@@ -113,6 +114,7 @@ export default function AgendaPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedConsulta, setSelectedConsulta] = useState<Consulta | null>(null);
+  const [editingLink, setEditingLink] = useState('');
 
   // Form State
   const [pacienteSearch, setPacienteSearch] = useState('');
@@ -137,6 +139,7 @@ export default function AgendaPage() {
     duracao: 30,
     observacoes: '',
     tipoAtendimento: 'presencial',
+    linkReuniao: '',
   });
 
   useEffect(() => {
@@ -329,6 +332,7 @@ export default function AgendaPage() {
         dataHoraFim: fim.toISOString(),
         status: 'agendado',
         tipoAtendimento: formData.tipoAtendimento,
+        linkReuniao: formData.tipoAtendimento === 'online' ? formData.linkReuniao : null,
         observacoes: formData.observacoes,
       });
 
@@ -363,6 +367,24 @@ export default function AgendaPage() {
     }
   };
 
+  useEffect(() => {
+    if (selectedConsulta) {
+      setEditingLink(selectedConsulta.linkReuniao || '');
+    }
+  }, [selectedConsulta]);
+
+  const handleUpdateLink = async () => {
+    if (!selectedConsulta) return;
+    try {
+      await api.patch(`/consultas/${selectedConsulta.id}`, { linkReuniao: editingLink });
+      toast.success('Link da reunião atualizado com sucesso!');
+      setSelectedConsulta(prev => prev ? { ...prev, linkReuniao: editingLink } : null);
+      fetchData();
+    } catch {
+      toast.error('Erro ao atualizar o link da reunião');
+    }
+  };
+
   // Filtragem de escopo de consultas com base no perfil logado
   const viewableConsultas = userRole === 'admin'
     ? consultas
@@ -385,6 +407,7 @@ export default function AgendaPage() {
       duracao: 30,
       observacoes: '',
       tipoAtendimento: 'presencial',
+      linkReuniao: '',
     });
     setPacienteSearch('');
     setSelectedPacienteId('');
@@ -823,6 +846,17 @@ export default function AgendaPage() {
                   </label>
                 </div>
               </div>
+              {formData.tipoAtendimento === 'online' && (
+                <div className="space-y-2 col-span-1 sm:col-span-2 animate-in fade-in slide-in-from-top-1">
+                  <Label>Link da Reunião (Meet, Zoom, Teams, etc.)</Label>
+                  <Input
+                    type="url"
+                    value={formData.linkReuniao}
+                    onChange={e => setFormData({ ...formData, linkReuniao: e.target.value })}
+                    placeholder="Ex: https://meet.google.com/abc-defg-hij"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -888,6 +922,31 @@ export default function AgendaPage() {
                     {selectedConsulta.servico.nome}
                   </span>
                 </div>
+              </div>
+
+              {/* Link da Reunião Online */}
+              <div className="space-y-2 border-t pt-3">
+                <Label>Link da Consulta Online</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="url"
+                    value={editingLink}
+                    onChange={e => setEditingLink(e.target.value)}
+                    placeholder="Ex: https://meet.google.com/abc-defg-hij"
+                    className="flex-1"
+                  />
+                  <button
+                    onClick={handleUpdateLink}
+                    className="px-3 py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors shrink-0"
+                  >
+                    Salvar Link
+                  </button>
+                </div>
+                {selectedConsulta.linkReuniao && (
+                  <p className="text-[10px] text-slate-400 truncate">
+                    Link cadastrado: <a href={selectedConsulta.linkReuniao} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{selectedConsulta.linkReuniao}</a>
+                  </p>
+                )}
               </div>
               
               <div className="space-y-2">
