@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Calendar, Users, Briefcase, Activity, DollarSign, MessageCircle, Settings, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { Calendar, Users, Briefcase, Activity, DollarSign, MessageCircle, Settings, LayoutDashboard, ChevronRight, CreditCard } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import api from '@/lib/axios';
@@ -16,6 +16,7 @@ const navItems = [
   { name: 'Serviços', href: '/app/servicos', icon: Activity },
   { name: 'Financeiro', href: '/app/financeiro', icon: DollarSign },
   { name: 'WhatsApp', href: '/app/whatsapp', icon: MessageCircle },
+  { name: 'Assinatura', href: '/app/plano', icon: CreditCard, adminOnly: true },
   { name: 'Configurações', href: '/app/configuracoes', icon: Settings, adminOnly: true },
 ];
 
