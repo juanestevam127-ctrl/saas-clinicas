@@ -119,7 +119,7 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
       </div>
 
       {/* Profile Access Level Selector */}
-      {loggedRole === 'admin' && (
+      {loggedRole === 'admin' && profissionais.filter(p => p.id !== localStorage.getItem('agendaduo_admin_profissional_id')).length > 0 && (
         <div className="px-4 py-3.5 border-b bg-slate-50/50 shrink-0">
           <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
             Nível de Acesso (Perfil)
@@ -138,11 +138,13 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
             className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
           >
             <option value="admin">🔑 Administrador (Clínica)</option>
-            {profissionais.map(p => (
-              <option key={p.id} value={`profissional:${p.id}`}>
-                🩺 {p.nome}
-              </option>
-            ))}
+            {profissionais
+              .filter(p => p.id !== localStorage.getItem('agendaduo_admin_profissional_id'))
+              .map(p => (
+                <option key={p.id} value={`profissional:${p.id}`}>
+                  🩺 {p.nome}
+                </option>
+              ))}
           </select>
         </div>
       )}
