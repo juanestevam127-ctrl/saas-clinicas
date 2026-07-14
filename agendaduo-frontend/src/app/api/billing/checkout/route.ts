@@ -92,6 +92,17 @@ export async function POST(req: NextRequest) {
         const msg = e.response?.data?.errors?.[0]?.description || e.message;
         return err('Erro ao criar cliente no Asaas: ' + msg, 500);
       }
+    } else {
+      // Atualizar o cliente no Asaas para garantir que ele tem o CPF/CNPJ
+      try {
+        await axios.post(`${ASAAS_API_URL}/customers/${asaasCustomerId}`, {
+          name: clinica.nome,
+          email: adminEmail,
+          cpfCnpj: finalCnpj.replace(/\D/g, ''),
+        }, { headers });
+      } catch (e: any) {
+        console.error('Erro ao atualizar cliente no Asaas:', e.response?.data || e.message);
+      }
     }
 
     // 4. Criar Assinatura no Asaas se não existir ou atualizar se o preço mudou
