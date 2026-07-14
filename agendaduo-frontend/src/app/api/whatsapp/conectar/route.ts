@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
         instanceName: data.instance?.instanceName ?? instanceName,
         status: data.instance?.status ?? 'connecting',
         qrcode: data.qrcode?.base64 ?? null,
+        hash: data.hash ?? null,
       });
     } catch (error: any) {
       const msg = error.response?.data?.message || error.response?.data?.error || error.message;

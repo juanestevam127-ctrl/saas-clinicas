@@ -87,10 +87,12 @@ Até breve!`;
 
         try {
           let instName = null;
+          let instHash = null;
           if (consulta.profissional?.bio) {
             try {
               const bio = JSON.parse(consulta.profissional.bio);
               instName = bio.whatsappInstanceName || null;
+              instHash = bio.whatsappInstanceHash || null;
             } catch(e){}
           }
 
@@ -127,6 +129,7 @@ Até breve!`;
             paciente_telefone: consulta.paciente?.telefone,
             profissional_nome: consulta.profissional?.nome,
             instancia_whatsapp: instName,
+            hash_whatsapp: instHash,
             servico: consulta.servico?.nome,
             data_hora: consulta.data_hora_inicio,
             antecedencia: config.antecedencia,

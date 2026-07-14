@@ -174,7 +174,11 @@ export default function WhatsAppPage() {
             try { bioObj = JSON.parse(prof.bio); } catch(e){}
           }
           await api.patch(`/profissionais/${targetProfId}`, { 
-            bio: JSON.stringify({ ...bioObj, whatsappInstanceName: instName }) 
+            bio: JSON.stringify({ 
+              ...bioObj, 
+              whatsappInstanceName: instName,
+              whatsappInstanceHash: data.hash || null
+            }) 
           });
         } catch (e) {
           console.error('Erro ao salvar instancia no banco', e);

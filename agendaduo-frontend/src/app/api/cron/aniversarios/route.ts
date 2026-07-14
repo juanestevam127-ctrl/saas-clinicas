@@ -58,6 +58,7 @@ Parabéns e muitas felicidades! 🎂💙`;
         .eq('clinica_id', clinica.id);
 
       let instName = null;
+      let instHash = null;
       if (profissionais && profissionais.length > 0) {
         for (const p of profissionais) {
           if (p.bio) {
@@ -65,6 +66,7 @@ Parabéns e muitas felicidades! 🎂💙`;
               const bio = JSON.parse(p.bio);
               if (bio.whatsappInstanceName) {
                 instName = bio.whatsappInstanceName;
+                instHash = bio.whatsappInstanceHash || null;
                 break;
               }
             } catch(e) {}
@@ -92,6 +94,7 @@ Parabéns e muitas felicidades! 🎂💙`;
             paciente_nome: paciente.nome,
             paciente_telefone: paciente.telefone,
             instancia_whatsapp: instName,
+            hash_whatsapp: instHash,
             data_aniversario: paciente.data_nascimento,
             mensagem: compiledMsg,
           };
