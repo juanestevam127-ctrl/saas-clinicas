@@ -26,6 +26,7 @@ type Consulta = {
   status: 'agendado' | 'confirmado' | 'realizado' | 'cancelado';
   googleEventId?: string;
   linkReuniao?: string;
+  tipoAtendimento?: 'presencial' | 'online';
 };
 
 const statusConfig: Record<string, any> = {
@@ -925,29 +926,31 @@ export default function AgendaPage() {
               </div>
 
               {/* Link da Reunião Online */}
-              <div className="space-y-2 border-t pt-3">
-                <Label>Link da Consulta Online</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="url"
-                    value={editingLink}
-                    onChange={e => setEditingLink(e.target.value)}
-                    placeholder="Ex: https://meet.google.com/abc-defg-hij"
-                    className="flex-1"
-                  />
-                  <button
-                    onClick={handleUpdateLink}
-                    className="px-3 py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors shrink-0"
-                  >
-                    Salvar Link
-                  </button>
+              {selectedConsulta.tipoAtendimento === 'online' && (
+                <div className="space-y-2 border-t pt-3">
+                  <Label>Link da Consulta Online</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="url"
+                      value={editingLink}
+                      onChange={e => setEditingLink(e.target.value)}
+                      placeholder="Ex: https://meet.google.com/abc-defg-hij"
+                      className="flex-1"
+                    />
+                    <button
+                      onClick={handleUpdateLink}
+                      className="px-3 py-2 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors shrink-0"
+                    >
+                      Salvar Link
+                    </button>
+                  </div>
+                  {selectedConsulta.linkReuniao && (
+                    <p className="text-[10px] text-slate-400 truncate">
+                      Link cadastrado: <a href={selectedConsulta.linkReuniao} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{selectedConsulta.linkReuniao}</a>
+                    </p>
+                  )}
                 </div>
-                {selectedConsulta.linkReuniao && (
-                  <p className="text-[10px] text-slate-400 truncate">
-                    Link cadastrado: <a href={selectedConsulta.linkReuniao} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{selectedConsulta.linkReuniao}</a>
-                  </p>
-                )}
-              </div>
+              )}
               
               <div className="space-y-2">
                 <Label>Atualizar Status</Label>

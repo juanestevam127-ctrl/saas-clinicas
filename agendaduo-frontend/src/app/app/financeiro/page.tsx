@@ -16,6 +16,7 @@ type Lancamento = {
   forma: string;
   data: string;
   dataRaw: string;
+  hora?: string;
 };
 
 const statusConfig = {
@@ -74,6 +75,7 @@ export default function FinanceiroPage() {
 
         const dataObj = new Date(c.dataHoraInicio);
         const dataStr = dataObj.toLocaleDateString('pt-BR');
+        const horaStr = dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         const dataRaw = c.dataHoraInicio.split('T')[0];
 
         return {
@@ -87,6 +89,7 @@ export default function FinanceiroPage() {
           forma: c.formaPagamento || 'PIX',
           data: dataStr,
           dataRaw,
+          hora: horaStr,
         };
       });
 
@@ -386,7 +389,9 @@ export default function FinanceiroPage() {
 
                       <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-1/2">
                         <div className="flex flex-col items-end">
-                          <span className="text-xs font-medium text-slate-700">{l.data}</span>
+                          <span className="text-xs font-medium text-slate-700">
+                            {l.data} {l.hora ? `às ${l.hora}` : ''}
+                          </span>
                           <span className="text-[10px] text-slate-400 mt-0.5">{l.forma}</span>
                         </div>
                         <div className="flex flex-col items-end gap-1.5 min-w-[90px]">
