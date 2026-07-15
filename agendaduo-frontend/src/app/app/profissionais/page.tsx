@@ -161,10 +161,7 @@ export default function ProfissionaisPage() {
       toast.error('O nome é obrigatório');
       return;
     }
-    if (!editingId && profissionais.length >= MAX_PROFISSIONAIS) {
-      toast.error(`Limite de ${MAX_PROFISSIONAIS} profissionais atingido.`);
-      return;
-    }
+    // Permite adicionar profissionais extras, exibindo o aviso de cobrança adicional
     
     try {
       const metadata = {
@@ -187,7 +184,11 @@ export default function ProfissionaisPage() {
         toast.success('Profissional atualizado com sucesso!');
       } else {
         await api.post('/profissionais', payload);
-        toast.success('Profissional criado com sucesso!');
+        if (profissionais.length >= MAX_PROFISSIONAIS) {
+          toast.success('Profissional extra criado! Acesse a aba Assinatura para atualizar sua mensalidade.');
+        } else {
+          toast.success('Profissional criado com sucesso!');
+        }
       }
       setIsModalOpen(false);
       fetchProfissionais();
