@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { User, LogOut, Menu } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isMasterPath = pathname === '/app/master-clinicas';
   const [userName, setUserName] = useState('Usuário');
   const [userRole, setUserRole] = useState('admin');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -56,7 +58,9 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full bg-blue-50/60 hover:bg-blue-100/80 cursor-pointer transition-all border border-blue-100"
         >
-          <span className="text-xs font-bold text-blue-700 hidden sm:inline">{userName}</span>
+          <span className="text-xs font-bold text-blue-700 hidden sm:inline">
+            {isMasterPath ? 'Master Admin' : userName}
+          </span>
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shadow-md shadow-blue-200 shrink-0">
             <User className="w-4 h-4 text-white" />
           </div>
@@ -70,9 +74,11 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             
             <div className="absolute right-0 top-12 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-4 py-2 border-b border-slate-50">
-                <p className="text-xs font-bold text-slate-800 truncate">{userName}</p>
+                <p className="text-xs font-bold text-slate-800 truncate">
+                  {isMasterPath ? 'Master Admin' : userName}
+                </p>
                 <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
-                  {userRole === 'admin' ? '🔑 Administrador' : '🩺 Profissional'}
+                  {isMasterPath ? '🛡️ Painel Master' : (userRole === 'admin' ? '🔑 Administrador' : '🩺 Profissional')}
                 </p>
               </div>
               <button
