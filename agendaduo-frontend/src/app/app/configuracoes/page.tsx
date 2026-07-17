@@ -148,6 +148,19 @@ export default function ConfiguracoesPage() {
           linkInstagram: data.clinica.linkInstagram || '',
           msgAvaliacao: data.clinica.msgAvaliacao || defaultMsgAvaliacao,
         });
+
+        if (data.clinica.horarioFuncionamento) {
+          try {
+            const parsed = typeof data.clinica.horarioFuncionamento === 'string'
+              ? JSON.parse(data.clinica.horarioFuncionamento)
+              : data.clinica.horarioFuncionamento;
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setHorarios(parsed);
+            }
+          } catch (e) {
+            console.error('Erro ao converter horarioFuncionamento', e);
+          }
+        }
       }
       
       if (data.lembretes) {
@@ -197,7 +210,10 @@ export default function ConfiguracoesPage() {
       }
 
       await api.put('/configuracoes', {
-        clinica,
+        clinica: {
+          ...clinica,
+          horarioFuncionamento: horarios,
+        },
         lembretes: lembretesData,
       });
 
