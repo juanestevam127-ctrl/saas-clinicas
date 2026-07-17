@@ -67,6 +67,22 @@ Obrigado por confiar em nosso trabalho. Esperamos continuar cuidando de você se
 
 Parabéns e muitas felicidades! 🎂💙`;
 
+const defaultMsgAvaliacao = `Olá, {{nome_paciente}}! 😊
+
+Esperamos que sua consulta tenha sido excelente e agradecemos pela confiança na {{nome_clinica}}.
+
+Sua opinião é muito importante para nós! Se puder, reserve um minutinho para avaliar nosso atendimento:
+
+⭐ Avalie nossa clínica:
+{{link_avaliacao_google}}
+
+E para acompanhar novidades, dicas de saúde e conteúdos exclusivos, siga nosso Instagram:
+
+📲 Instagram:
+{{link_instagram}}
+
+Obrigado por fazer parte da nossa história. Esperamos revê-lo em breve! 💙`;
+
 export default function ConfiguracoesPage() {
   const [activeTab, setActiveTab] = useState('clinica');
   const [horarios, setHorarios] = useState<HorarioConfig[]>(defaultHorarios);
@@ -89,6 +105,12 @@ export default function ConfiguracoesPage() {
     msgLembretePresencial: defaultMsgPresencial,
     msgLembreteOnline: defaultMsgOnline,
     msgAniversario: defaultMsgAniversario,
+    lembreteAvaliacaoAtivo: false,
+    lembreteAvaliacaoValor: 60,
+    lembreteAvaliacaoUnidade: 'minutos',
+    linkAvaliacaoGoogle: '',
+    linkInstagram: '',
+    msgAvaliacao: defaultMsgAvaliacao,
   });
 
   const toggleHorario = (i: number) => {
@@ -119,6 +141,12 @@ export default function ConfiguracoesPage() {
           msgLembretePresencial: data.clinica.msgLembretePresencial || defaultMsgPresencial,
           msgLembreteOnline: data.clinica.msgLembreteOnline || defaultMsgOnline,
           msgAniversario: data.clinica.msgAniversario || defaultMsgAniversario,
+          lembreteAvaliacaoAtivo: data.clinica.lembreteAvaliacaoAtivo || false,
+          lembreteAvaliacaoValor: data.clinica.lembreteAvaliacaoValor !== undefined ? Number(data.clinica.lembreteAvaliacaoValor) : 60,
+          lembreteAvaliacaoUnidade: data.clinica.lembreteAvaliacaoUnidade || 'minutos',
+          linkAvaliacaoGoogle: data.clinica.linkAvaliacaoGoogle || '',
+          linkInstagram: data.clinica.linkInstagram || '',
+          msgAvaliacao: data.clinica.msgAvaliacao || defaultMsgAvaliacao,
         });
       }
       
@@ -483,6 +511,80 @@ export default function ConfiguracoesPage() {
                 </div>
               </div>
 
+              {/* Lembretes de Avaliação */}
+              <div className="border-t pt-5 mt-5 space-y-4">
+                <h3 className="text-sm font-semibold text-slate-800">Lembrete de Avaliação da Clínica</h3>
+                <p className="text-xs text-slate-500">Envie mensagens automáticas convidando os pacientes a avaliarem o atendimento no Google e seguirem o Instagram pós-consulta.</p>
+                
+                <div className={`flex flex-col gap-4 p-5 rounded-xl border transition-colors ${
+                  clinica.lembreteAvaliacaoAtivo ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setClinica(prev => ({ ...prev, lembreteAvaliacaoAtivo: !prev.lembreteAvaliacaoAtivo }))}
+                      className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${
+                        clinica.lembreteAvaliacaoAtivo ? 'bg-indigo-500' : 'bg-slate-300'
+                      }`}
+                    >
+                      <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                        clinica.lembreteAvaliacaoAtivo ? 'translate-x-5' : 'translate-x-0'
+                      }`} />
+                    </button>
+                    <div className="flex-1">
+                      <div className={`text-sm font-semibold ${clinica.lembreteAvaliacaoAtivo ? 'text-slate-800' : 'text-slate-400'}`}>
+                        Ativar Lembrete de Avaliação pós-consulta
+                      </div>
+                    </div>
+                  </div>
+
+                  {clinica.lembreteAvaliacaoAtivo && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 border-t pt-4 border-slate-200/60">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-semibold text-slate-600">Enviar quanto tempo após a consulta?</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            value={clinica.lembreteAvaliacaoValor}
+                            onChange={e => setClinica(prev => ({ ...prev, lembreteAvaliacaoValor: Math.max(1, parseInt(e.target.value) || 1) }))}
+                            className="w-24 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <select
+                            value={clinica.lembreteAvaliacaoUnidade}
+                            onChange={e => setClinica(prev => ({ ...prev, lembreteAvaliacaoUnidade: e.target.value }))}
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                          >
+                            <option value="minutos">Minuto(s)</option>
+                            <option value="horas">Hora(s)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-semibold text-slate-600">Link de Avaliação do Google</label>
+                        <input
+                          type="text"
+                          value={clinica.linkAvaliacaoGoogle}
+                          onChange={e => setClinica(prev => ({ ...prev, linkAvaliacaoGoogle: e.target.value }))}
+                          placeholder="Ex: https://g.page/r/sua-clinica/review"
+                          className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5 sm:col-span-2">
+                        <label className="block text-xs font-semibold text-slate-600">Link do Instagram</label>
+                        <input
+                          type="text"
+                          value={clinica.linkInstagram}
+                          onChange={e => setClinica(prev => ({ ...prev, linkInstagram: e.target.value }))}
+                          placeholder="Ex: https://instagram.com/suaclinica"
+                          className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Modelos de Mensagem Customizados */}
               <div className="border-t pt-5 mt-5 space-y-4">
                 <h3 className="text-sm font-semibold text-slate-800">Modelos de Mensagens (WhatsApp)</h3>
@@ -524,6 +626,20 @@ export default function ConfiguracoesPage() {
                     />
                     <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
                   </div>
+
+                  {/* Mensagem de Avaliação */}
+                  {clinica.lembreteAvaliacaoAtivo && (
+                    <div className="space-y-1.5 border-t pt-4">
+                      <label className="block text-xs font-semibold text-slate-600">Mensagem de Avaliação da Clínica</label>
+                      <textarea
+                        value={clinica.msgAvaliacao}
+                        onChange={e => setClinica(prev => ({ ...prev, msgAvaliacao: e.target.value }))}
+                        rows={9}
+                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                      />
+                      <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{nome_clinica}}"}</code>, <code>{"{{link_avaliacao_google}}"}</code>, <code>{"{{link_instagram}}"}</code></p>
+                    </div>
+                  )}
                 </div>
               </div>
 

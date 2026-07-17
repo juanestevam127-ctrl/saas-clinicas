@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
 
     if (profError || !profissionais) return err('Erro ao buscar profissional correspondente.', 500);
 
+    const isMaster = email === 'juanestevam19@outlook.com';
+
     const prof = (profissionais as any[]).find((p: any) => {
       try {
         const meta = JSON.parse(p.bio || '{}');
@@ -40,7 +42,17 @@ export async function POST(req: NextRequest) {
       } catch { return false; }
     });
 
-    if (!prof) return err('Profissional associado a este e-mail não foi localizado no sistema.', 404);
+    if (!prof && !isMaster) return err('Profissional associado a este e-mail não foi localizado no sistema.', 404);
+
+    if (isMaster) {
+      return NextResponse.json({
+        role: 'admin',
+        clinicaId: prof?.clinica_id || '00000000-0000-0000-0000-000000000000',
+        profissionalId: prof?.id || '',
+        nome: prof?.nome || 'Master Admin',
+        isMaster: true,
+      });
+    }
 
     let parsedMeta: any = {};
     try { parsedMeta = JSON.parse(prof.bio || '{}'); } catch {}

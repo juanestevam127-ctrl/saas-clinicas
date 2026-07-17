@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Calendar, Users, Briefcase, Activity, DollarSign, MessageCircle, Settings, LayoutDashboard, ChevronRight, CreditCard } from 'lucide-react';
+import { Calendar, Users, Briefcase, Activity, DollarSign, MessageCircle, Settings, LayoutDashboard, ChevronRight, CreditCard, Shield } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import api from '@/lib/axios';
@@ -181,6 +181,19 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
             );
           })}
       </nav>
+
+      {/* Voltar ao Painel Master if master user */}
+      {typeof window !== 'undefined' && localStorage.getItem('agendaduo_is_master') === 'true' && (
+        <div className="px-3 pb-2 shrink-0">
+          <Link
+            href="/app/master-clinicas"
+            className="flex items-center justify-center gap-2 w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-sm"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            Voltar ao Painel Master
+          </Link>
+        </div>
+      )}
 
       {/* Footer / Tenant info */}
       <div className="p-3 border-t shrink-0">

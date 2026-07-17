@@ -32,7 +32,7 @@ type Consulta = {
 const statusConfig: Record<string, any> = {
   agendado: { label: 'Agendado', bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' },
   confirmado: { label: 'Confirmado', bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-200' },
-  realizado: { label: 'Realizado', bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-200' },
+  realizado: { label: 'Atendida', bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-200' },
   cancelado: { label: 'Cancelado', bg: 'bg-red-50', text: 'text-red-500', border: 'border-red-100' },
 };
 
@@ -956,7 +956,7 @@ export default function AgendaPage() {
                 <Label>Atualizar Status</Label>
                 <div className="flex gap-2 flex-wrap">
                   <button onClick={() => handleUpdateStatus(selectedConsulta.id, 'confirmado')} className="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-sm font-medium rounded-md hover:bg-emerald-200">Confirmar</button>
-                  <button onClick={() => handleUpdateStatus(selectedConsulta.id, 'realizado')} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-200">Finalizar</button>
+                  <button onClick={() => handleUpdateStatus(selectedConsulta.id, 'realizado')} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-md hover:bg-slate-200">Atendida</button>
                   <button onClick={() => handleUpdateStatus(selectedConsulta.id, 'cancelado')} className="px-3 py-1.5 bg-red-100 text-red-700 text-sm font-medium rounded-md hover:bg-red-200">Cancelar</button>
                 </div>
               </div>

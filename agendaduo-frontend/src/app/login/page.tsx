@@ -40,11 +40,23 @@ export default function LoginPage() {
       localStorage.setItem('agendaduo_user_name', data.nome || 'Usuário');
       if (data.trialEndsAt) localStorage.setItem('agendaduo_trial_ends_at', data.trialEndsAt);
 
+      if (data.isMaster) {
+        localStorage.setItem('agendaduo_is_master', 'true');
+        localStorage.setItem('agendaduo_master_email', email);
+      } else {
+        localStorage.removeItem('agendaduo_is_master');
+        localStorage.removeItem('agendaduo_master_email');
+      }
+
       // Avisa as outras abas/componentes da alteração do perfil
       window.dispatchEvent(new Event('auth-profile-changed'));
 
       toast.success(`Bem vindo de volta, ${data.nome}!`);
-      router.push('/app');
+      if (data.isMaster) {
+        router.push('/app/master-clinicas');
+      } else {
+        router.push('/app');
+      }
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'E-mail ou senha incorretos.');
     } finally {
