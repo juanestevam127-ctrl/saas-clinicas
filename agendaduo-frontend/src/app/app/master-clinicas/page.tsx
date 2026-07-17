@@ -42,6 +42,7 @@ export default function MasterClinicasPage() {
     localStorage.setItem('agendaduo_user_name', c.adminNome || 'Administrador');
     localStorage.setItem('agendaduo_user_profissional_id', c.adminId || '');
     localStorage.setItem('agendaduo_admin_profissional_id', c.adminId || '');
+    localStorage.setItem('agendaduo_user_especialidade', c.adminEspecialidade || '-');
     
     // Disparar evento para atualizar o Sidebar/Header
     window.dispatchEvent(new Event('auth-profile-changed'));

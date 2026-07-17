@@ -27,24 +27,40 @@ type Instancia = {
 };
 
 // LocalStorage helpers
+function getClinicaId(): string {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem('agendaduo_clinica_id') || 'default';
+}
+
 function getSavedNames(): string[] {
   if (typeof window === 'undefined') return [];
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+  const cid = getClinicaId();
+  try { return JSON.parse(localStorage.getItem(`${LS_KEY}_${cid}`) || '[]'); } catch { return []; }
 }
+
 function addSavedName(name: string) {
+  const cid = getClinicaId();
   const list = getSavedNames();
-  if (!list.includes(name)) localStorage.setItem(LS_KEY, JSON.stringify([...list, name]));
+  if (!list.includes(name)) {
+    localStorage.setItem(`${LS_KEY}_${cid}`, JSON.stringify([...list, name]));
+  }
 }
+
 function removeSavedName(name: string) {
+  const cid = getClinicaId();
   const list = getSavedNames().filter((n) => n !== name);
-  localStorage.setItem(LS_KEY, JSON.stringify(list));
+  localStorage.setItem(`${LS_KEY}_${cid}`, JSON.stringify(list));
 }
+
 function getProfMap(): Record<string, { profId: string; profNome: string }> {
   if (typeof window === 'undefined') return {};
-  try { return JSON.parse(localStorage.getItem(LS_PROF_MAP) || '{}'); } catch { return {}; }
+  const cid = getClinicaId();
+  try { return JSON.parse(localStorage.getItem(`${LS_PROF_MAP}_${cid}`) || '{}'); } catch { return {}; }
 }
+
 function setProfMap(map: Record<string, { profId: string; profNome: string }>) {
-  localStorage.setItem(LS_PROF_MAP, JSON.stringify(map));
+  const cid = getClinicaId();
+  localStorage.setItem(`${LS_PROF_MAP}_${cid}`, JSON.stringify(map));
 }
 
 export default function WhatsAppPage() {

@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
         adminNome: adminProf?.nome || '—',
         adminEmail: adminProf?.bio ? (JSON.parse(adminProf.bio).adminEmail || JSON.parse(adminProf.bio).emailInvite || '—') : '—',
         adminId: adminProf?.id || '',
+        adminEspecialidade: adminProf?.especialidade || '-',
         totalProfessionals: clinicaProfs.length
       };
     });
