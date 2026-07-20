@@ -28,6 +28,7 @@ type Consulta = {
   googleEventId?: string;
   linkReuniao?: string;
   tipoAtendimento?: 'presencial' | 'online';
+  observacoes?: string;
 };
 
 const statusConfig: Record<string, any> = {
@@ -118,6 +119,7 @@ export default function AgendaPage() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedConsulta, setSelectedConsulta] = useState<Consulta | null>(null);
   const [editingLink, setEditingLink] = useState('');
+  const [editingObservacoes, setEditingObservacoes] = useState('');
 
   // Form State
   const [pacienteSearch, setPacienteSearch] = useState('');
@@ -389,6 +391,7 @@ export default function AgendaPage() {
   useEffect(() => {
     if (selectedConsulta) {
       setEditingLink(selectedConsulta.linkReuniao || '');
+      setEditingObservacoes(selectedConsulta.observacoes || '');
     }
   }, [selectedConsulta]);
 
@@ -401,6 +404,18 @@ export default function AgendaPage() {
       fetchData();
     } catch {
       toast.error('Erro ao atualizar o link da reunião');
+    }
+  };
+
+  const handleUpdateObservacoes = async () => {
+    if (!selectedConsulta) return;
+    try {
+      await api.patch(`/consultas/${selectedConsulta.id}`, { observacoes: editingObservacoes });
+      toast.success('Observações da consulta salvas com sucesso!');
+      setSelectedConsulta(prev => prev ? { ...prev, observacoes: editingObservacoes } : null);
+      fetchData();
+    } catch {
+      toast.error('Erro ao atualizar as observações');
     }
   };
 
@@ -985,6 +1000,26 @@ export default function AgendaPage() {
                 </div>
               )}
               
+              {/* Observações da Consulta */}
+              <div className="space-y-2 border-t pt-3">
+                <Label>Anotações Clínicas / Observações da Consulta</Label>
+                <textarea
+                  value={editingObservacoes}
+                  onChange={e => setEditingObservacoes(e.target.value)}
+                  placeholder="Digite observações sobre o atendimento (prescrições, queixas, evolução)..."
+                  rows={3}
+                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
+                />
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleUpdateObservacoes}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors"
+                  >
+                    Salvar Observações
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label>Atualizar Status</Label>
                 <div className="flex gap-2 flex-wrap">
