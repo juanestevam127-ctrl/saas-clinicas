@@ -933,6 +933,17 @@ export default function AgendaPage() {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label>Anotações Clínicas / Observações do Agendamento</Label>
+              <textarea
+                value={formData.observacoes}
+                onChange={e => setFormData({ ...formData, observacoes: e.target.value })}
+                placeholder="Digite anotações ou observações iniciais para este agendamento..."
+                rows={3}
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
+              />
+            </div>
+
             <div className="pt-4 flex justify-end gap-2">
               <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-lg">Cancelar</button>
               <button type="submit" className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700">Agendar</button>
