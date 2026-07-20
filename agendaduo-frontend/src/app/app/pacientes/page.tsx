@@ -23,6 +23,11 @@ type Paciente = {
   genero: string | null;
   cpf: string | null;
   dataNascimento: string | null;
+  cep?: string | null;
+  endereco?: string | null;
+  cidade?: string | null;
+  estado?: string | null;
+  observacoes?: string | null;
   _count?: { consultas: number };
 };
 
@@ -52,6 +57,7 @@ function maskTelefone(value: string) {
     .replace(/(\d{5})(\d)/, '$1-$2');
 }
 
+// Keep git log changes
 function maskCpf(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 11);
   return digits
@@ -76,6 +82,7 @@ const emptyForm = {
   endereco: '',
   cidade: '',
   estado: '',
+  observacoes: '',
   ativo: true,
 };
 
@@ -164,10 +171,11 @@ export default function PacientesPage() {
       cpf: paciente.cpf || '',
       dataNascimento: paciente.dataNascimento ? paciente.dataNascimento.split('T')[0] : '',
       genero: paciente.genero || '',
-      cep: '',
-      endereco: '',
-      cidade: '',
-      estado: '',
+      cep: paciente.cep || '',
+      endereco: paciente.endereco || '',
+      cidade: paciente.cidade || '',
+      estado: paciente.estado || '',
+      observacoes: paciente.observacoes || '',
       ativo: paciente.ativo,
     });
     setIsModalOpen(true);
@@ -223,13 +231,11 @@ export default function PacientesPage() {
       }
     }
 
-    if (formData.endereco) {
-      let addr = formData.endereco;
-      if (formData.cidade) addr += ` - ${formData.cidade}`;
-      if (formData.estado) addr += `/${formData.estado}`;
-      if (formData.cep) addr += ` ${formData.cep}`;
-      payload.observacoes = `Endereço: ${addr}`;
-    }
+    payload.cep = formData.cep || null;
+    payload.endereco = formData.endereco || null;
+    payload.cidade = formData.cidade || null;
+    payload.estado = formData.estado || null;
+    payload.observacoes = formData.observacoes || null;
 
     try {
       if (editingId) {
@@ -529,6 +535,18 @@ export default function PacientesPage() {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Observações Gerais */}
+            <div className="space-y-1.5 border-t pt-3">
+              <Label>Observações Clínicas / Informações Gerais do Paciente</Label>
+              <textarea
+                value={formData.observacoes}
+                onChange={e => setFormData({ ...formData, observacoes: e.target.value })}
+                placeholder="Ex: Alergias, histórico patológico, observações administrativas, etc..."
+                rows={3}
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder-slate-400"
+              />
             </div>
 
             <div className="pt-3 flex justify-between gap-2 border-t">
