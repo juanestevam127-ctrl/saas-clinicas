@@ -119,6 +119,17 @@ export default function PacientesPage() {
       ]);
       setPacientes(pacRes.data);
       setConsultas(consRes.data);
+
+      // Abrir modal de edição automaticamente se vier redirecionado do prontuário
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramEditarId = urlParams.get('editarPacienteId');
+      if (paramEditarId) {
+        const found = pacRes.data.find((p: any) => p.id === paramEditarId);
+        if (found) {
+          openEditModal(found);
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
     } catch (error) {
       toast.error('Erro ao buscar pacientes');
     } finally {

@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { 
-  User, Clipboard, Calendar, FileText, DollarSign, Image as ImageIcon, 
-  Trash2, Upload, Search, Loader2, AlertCircle, FileDown, Eye, CheckCircle2, ChevronRight
+  User, Clipboard, Calendar, FileText, DollarSign, Edit3, Save, X,
+  Trash2, Upload, Search, Loader2, FileDown, Eye, ChevronRight, ExternalLink
 } from 'lucide-react';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
@@ -33,14 +33,12 @@ export default function ProntuariosPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // Tab State: Antes e Depois
-  const [antesImage, setAntesImage] = useState<string | null>(null);
-  const [depoisImage, setDepoisImage] = useState<string | null>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-
-  // Tab State: Consultas
+  // Tab State: Consultas & Observações inline
   const [consultas, setConsultas] = useState<any[]>([]);
   const [loadingConsultas, setLoadingConsultas] = useState(false);
+  const [editingObsId, setEditingObsId] = useState<string | null>(null);
+  const [tempObs, setTempObs] = useState('');
+  const [savingObs, setSavingObs] = useState(false);
 
   // Tab State: Financeiro
   const [financeiro, setFinanceiro] = useState<any[]>([]);
@@ -65,8 +63,7 @@ export default function ProntuariosPage() {
   useEffect(() => {
     if (selectedPaciente) {
       setNewNota('');
-      setAntesImage(null);
-      setDepoisImage(null);
+      setEditingObsId(null);
       fetchTabContent(activeTab);
     }
   }, [selectedPaciente, activeTab]);
@@ -97,7 +94,7 @@ export default function ProntuariosPage() {
       } finally {
         setLoadingEvolucoes(false);
       }
-    } else if (tab === 'arquivos' || tab === 'antesDepois') {
+    } else if (tab === 'arquivos') {
       setLoadingArquivos(true);
       try {
         const res = await api.get(`/prontuarios/arquivos?pacienteId=${selectedPaciente.id}`);
@@ -112,6 +109,8 @@ export default function ProntuariosPage() {
       try {
         const res = await api.get('/consultas');
         const list = (res.data || []).filter((c: any) => c.pacienteId === selectedPaciente.id);
+        // Ordenar consultas por data mais recente
+        list.sort((a: any, b: any) => new Date(b.dataHoraInicio).getTime() - new Date(a.dataHoraInicio).getTime());
         setConsultas(list);
       } catch {
         toast.error('Erro ao carregar histórico de consultas');
@@ -178,7 +177,6 @@ export default function ProntuariosPage() {
     const file = e.target.files?.[0];
     if (!file || !selectedPaciente) return;
 
-    // Validar tamanho máximo de 2MB
     const MAX_SIZE = 2 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
       toast.error('O arquivo ultrapassa o limite de 2MB permitidos para fotos e PDFs.');
@@ -214,11 +212,24 @@ export default function ProntuariosPage() {
     try {
       await api.delete(`/prontuarios/arquivos?id=${id}`);
       setArquivos(prev => prev.filter(a => a.id !== id));
-      if (antesImage === id) setAntesImage(null);
-      if (depoisImage === id) setDepoisImage(null);
       toast.success('Arquivo removido com sucesso');
     } catch {
       toast.error('Erro ao remover arquivo');
+    }
+  };
+
+  // Salvar Observações de uma Consulta Específica
+  const handleSaveObs = async (consultaId: string) => {
+    setSavingObs(true);
+    try {
+      await api.patch(`/consultas/${consultaId}`, { observacoes: tempObs.trim() });
+      setConsultas(prev => prev.map(c => c.id === consultaId ? { ...c, observacoes: tempObs.trim() } : c));
+      setEditingObsId(null);
+      toast.success('Observações da consulta atualizadas com sucesso!');
+    } catch {
+      toast.error('Erro ao salvar observações da consulta');
+    } finally {
+      setSavingObs(false);
     }
   };
 
@@ -296,11 +307,22 @@ export default function ProntuariosPage() {
             {/* Header do Paciente */}
             <div className="bg-white border rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100 font-bold text-base shadow-sm">
+                <div 
+                  onClick={() => router.push(`/app/pacientes?editarPacienteId=${selectedPaciente.id}`)}
+                  className="w-12 h-12 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100 font-bold text-base shadow-sm cursor-pointer transition-colors"
+                  title="Clique para editar cadastro"
+                >
                   {selectedPaciente.nome.charAt(0)}
                 </div>
                 <div>
-                  <h1 className="text-lg font-black text-slate-800">{selectedPaciente.nome}</h1>
+                  <h1 
+                    onClick={() => router.push(`/app/pacientes?editarPacienteId=${selectedPaciente.id}`)}
+                    className="text-lg font-black text-slate-800 hover:text-blue-600 transition-colors cursor-pointer flex items-center gap-1.5"
+                    title="Clique para editar cadastro"
+                  >
+                    {selectedPaciente.nome}
+                    <span className="text-[10px] text-slate-400 font-normal">(Editar Cadastro)</span>
+                  </h1>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-semibold">
                       CPF: {selectedPaciente.cpf || '—'}
@@ -319,8 +341,7 @@ export default function ProntuariosPage() {
                 { key: 'ficha', label: 'Ficha Cadastral', icon: User },
                 { key: 'evolucoes', label: 'Evoluções', icon: Clipboard },
                 { key: 'arquivos', label: 'Fotos & PDFs', icon: Upload },
-                { key: 'antesDepois', label: 'Antes & Depois', icon: ImageIcon },
-                { key: 'consultas', label: 'Consultas', icon: Calendar },
+                { key: 'consultas', label: 'Consultas (Prontuário/Timeline)', icon: Calendar },
                 { key: 'financeiro', label: 'Financeiro', icon: DollarSign },
               ].map(tab => (
                 <button
@@ -343,7 +364,19 @@ export default function ProntuariosPage() {
               
               {/* TAB 1: FICHA CADASTRAL */}
               {activeTab === 'ficha' && (
-                <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6">
+                <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6 relative">
+                  
+                  {/* Botão de Edição Rápida */}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => router.push(`/app/pacientes?editarPacienteId=${selectedPaciente.id}`)}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      Editar Ficha Cadastro
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Nome Completo</span>
@@ -480,45 +513,50 @@ export default function ProntuariosPage() {
                     )}
                   </div>
 
-                  {/* Lista de Arquivos */}
+                  {/* Lista de Arquivos com Nomes Maiores e Datas Visíveis */}
                   {loadingArquivos ? (
                     <div className="flex justify-center py-8">
                       <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                     </div>
                   ) : arquivos.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {arquivos.map((arq) => (
-                        <div key={arq.id} className="border rounded-xl p-3 flex items-center justify-between gap-3 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                          <div className="flex items-center gap-3.5 min-w-0">
+                        <div key={arq.id} className="border rounded-xl p-4 flex items-center justify-between gap-4 bg-slate-50/50 hover:bg-slate-50 transition-all shadow-sm">
+                          <div className="flex items-center gap-4 min-w-0 flex-1">
                             {arq.tipoArquivo === 'foto' ? (
                               <div 
                                 onClick={() => setPreviewImage(arq.urlArquivo)}
-                                className="w-10 h-10 rounded-lg overflow-hidden shrink-0 cursor-pointer relative bg-white border flex items-center justify-center hover:opacity-85 transition-opacity"
+                                className="w-14 h-14 rounded-lg overflow-hidden shrink-0 cursor-pointer relative bg-white border flex items-center justify-center hover:opacity-85 transition-opacity"
                               >
                                 <img src={arq.urlArquivo} alt={arq.nomeArquivo} className="w-full h-full object-cover" />
                               </div>
                             ) : (
-                              <div className="w-10 h-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center shrink-0 border border-red-100">
-                                <FileText className="w-5 h-5" />
+                              <div className="w-14 h-14 bg-red-50 text-red-600 rounded-lg flex items-center justify-center shrink-0 border border-red-100">
+                                <FileText className="w-7 h-7" />
                               </div>
                             )}
-                            <div className="min-w-0">
-                              <p className="text-xs font-bold text-slate-700 truncate" title={arq.nomeArquivo}>
+                            <div className="min-w-0 flex-1">
+                              {/* Nome do arquivo maior e perfeitamente visível */}
+                              <h4 className="text-sm font-bold text-slate-800 break-words leading-tight" title={arq.nomeArquivo}>
                                 {arq.nomeArquivo}
+                              </h4>
+                              {/* Data de Adição Visível */}
+                              <p className="text-[10px] text-slate-400 mt-1">
+                                Adicionado em: {new Date(arq.createdAt).toLocaleString('pt-BR')}
                               </p>
-                              <p className="text-[9px] text-slate-400 mt-0.5">
-                                {(arq.tamanhoBytes / 1024).toFixed(1)} KB
+                              <p className="text-[10px] text-slate-400">
+                                Tamanho: {(arq.tamanhoBytes / 1024).toFixed(1)} KB
                               </p>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 shrink-0">
+                          <div className="flex items-center gap-1.5 shrink-0">
                             {arq.tipoArquivo === 'pdf' ? (
                               <a
                                 href={arq.urlArquivo}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-white"
+                                className="p-2 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-white border"
                                 title="Visualizar/Baixar PDF"
                               >
                                 <FileDown className="w-4 h-4" />
@@ -526,7 +564,7 @@ export default function ProntuariosPage() {
                             ) : (
                               <button
                                 onClick={() => setPreviewImage(arq.urlArquivo)}
-                                className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-white cursor-pointer"
+                                className="p-2 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-white border cursor-pointer"
                                 title="Ampliar Imagem"
                               >
                                 <Eye className="w-4 h-4" />
@@ -534,7 +572,7 @@ export default function ProntuariosPage() {
                             )}
                             <button
                               onClick={() => handleDeleteArquivo(arq.id)}
-                              className="p-1.5 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-white cursor-pointer"
+                              className="p-2 text-slate-400 hover:text-red-500 transition-colors rounded-lg hover:bg-white border cursor-pointer"
                               title="Remover arquivo"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -551,155 +589,131 @@ export default function ProntuariosPage() {
                 </div>
               )}
 
-              {/* TAB 4: ANTES E DEPOIS */}
-              {activeTab === 'antesDepois' && (
-                <div className="bg-white border rounded-2xl p-5 shadow-sm space-y-6">
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-slate-800">Comparador de Evolução (Antes/Depois)</h3>
-                    <p className="text-xs text-slate-500">Selecione duas fotos do prontuário para realizar o comparativo visual.</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 border-b pb-5">
-                    {/* Seleção do Antes */}
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-600">Foto 1 (Antes / Inicial)</label>
-                      <select
-                        value={antesImage || ''}
-                        onChange={e => setAntesImage(e.target.value || null)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none"
-                      >
-                        <option value="">Selecione uma foto...</option>
-                        {arquivos.filter(a => a.tipoArquivo === 'foto').map(a => (
-                          <option key={a.id} value={a.urlArquivo}>{a.nomeArquivo}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Seleção do Depois */}
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-600">Foto 2 (Depois / Atual)</label>
-                      <select
-                        value={depoisImage || ''}
-                        onChange={e => setDepoisImage(e.target.value || null)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none"
-                      >
-                        <option value="">Selecione uma foto...</option>
-                        {arquivos.filter(a => a.tipoArquivo === 'foto').map(a => (
-                          <option key={a.id} value={a.urlArquivo}>{a.nomeArquivo}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {antesImage && depoisImage ? (
-                    <div className="space-y-4">
-                      {/* Visualizador Slider Antes/Depois */}
-                      <div className="relative w-full max-w-2xl mx-auto overflow-hidden aspect-[4/3] rounded-2xl border bg-slate-100 shadow-md">
-                        {/* Imagem do Depois (Fundo) */}
-                        <img src={depoisImage} alt="Depois" className="absolute inset-0 w-full h-full object-cover select-none" />
-
-                        {/* Imagem do Antes (Frente / Recortada pelo slider) */}
-                        <div 
-                          className="absolute inset-0 overflow-hidden border-r-2 border-white select-none"
-                          style={{ width: `${sliderPos}%` }}
-                        >
-                          <img 
-                            src={antesImage} 
-                            alt="Antes" 
-                            className="absolute inset-0 w-full h-full object-cover max-w-none"
-                            style={{ width: '100%', height: '100%' }}
-                          />
-                          <span className="absolute bottom-3 left-3 bg-black/60 text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Antes</span>
-                        </div>
-                        <span className="absolute bottom-3 right-3 bg-blue-600/80 text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Depois</span>
-
-                        {/* Slider de Arrastar */}
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={sliderPos}
-                          onChange={e => setSliderPos(Number(e.target.value))}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
-                        />
-                        
-                        {/* Linha e bolinha visual do Slider */}
-                        <div 
-                          className="absolute top-0 bottom-0 pointer-events-none z-10 w-0.5 bg-white"
-                          style={{ left: `${sliderPos}%` }}
-                        >
-                          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg border border-slate-200 flex items-center justify-center">
-                            <span className="text-slate-400 text-xs font-bold">↔</span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-center text-[10px] text-slate-400">Arraste para os lados sobre a foto para comparar a evolução clínica.</p>
-                    </div>
-                  ) : (
-                    <div className="text-center py-16 text-slate-400 text-xs border border-dashed rounded-xl">
-                      Por favor, selecione as duas imagens nos campos acima para ver a comparação antes/depois.
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* TAB 5: HISTÓRICO DE CONSULTAS */}
+              {/* TAB 4: HISTÓRICO DE CONSULTAS & TIMELINE DE ANOTAÇÕES */}
               {activeTab === 'consultas' && (
-                <div className="bg-white border rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="space-y-6">
+                  <div className="bg-white border rounded-2xl p-5 shadow-sm space-y-1">
+                    <h3 className="text-sm font-bold text-slate-800">Timeline Clínico / Anotações das Consultas</h3>
+                    <p className="text-xs text-slate-500">Veja o histórico de consultas e adicione observações específicas para cada atendimento realizado.</p>
+                  </div>
+
                   {loadingConsultas ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                    <div className="flex justify-center py-12 bg-white border rounded-2xl">
+                      <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                     </div>
                   ) : consultas.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
-                            <th className="py-3 px-2">Data e Hora</th>
-                            <th className="py-3 px-2">Profissional</th>
-                            <th className="py-3 px-2">Serviço</th>
-                            <th className="py-3 px-2">Atendimento</th>
-                            <th className="py-3 px-2">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50 text-xs text-slate-700">
-                          {consultas.map((c) => (
-                            <tr key={c.id} className="hover:bg-slate-50/50">
-                              <td className="py-3 px-2 font-semibold">
-                                {new Date(c.dataHoraInicio).toLocaleDateString('pt-BR')} às {new Date(c.dataHoraInicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                              </td>
-                              <td className="py-3 px-2 font-medium">{c.profissional?.nome || '—'}</td>
-                              <td className="py-3 px-2">{c.servico?.nome || '—'}</td>
-                              <td className="py-3 px-2">
-                                <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                                  c.tipoAtendimento === 'online' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-700'
-                                }`}>
-                                  {c.tipoAtendimento === 'online' ? 'Online' : 'Presencial'}
-                                </span>
-                              </td>
-                              <td className="py-3 px-2">
-                                <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
+                    <div className="space-y-4">
+                      {consultas.map((c) => {
+                        const dataObj = new Date(c.dataHoraInicio);
+                        const isEditing = editingObsId === c.id;
+
+                        return (
+                          <div key={c.id} className="bg-white border rounded-2xl p-5 shadow-sm space-y-4 hover:border-slate-300 transition-colors">
+                            {/* Cabeçalho do Card */}
+                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b pb-3.5">
+                              <div>
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider mr-2 ${
                                   c.status === 'realizado' ? 'bg-slate-100 text-slate-600' :
-                                  c.status === 'confirmado' ? 'bg-emerald-100 text-emerald-700' :
-                                  c.status === 'cancelado' ? 'bg-red-50 text-red-500' : 'bg-blue-100 text-blue-700'
+                                  c.status === 'confirmado' ? 'bg-emerald-50 text-emerald-700' :
+                                  c.status === 'cancelado' ? 'bg-red-50 text-red-500' : 'bg-blue-50 text-blue-700'
                                 }`}>
                                   {c.status === 'realizado' ? 'Atendida' : c.status}
                                 </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                <span className="text-xs font-black text-slate-800">
+                                  {dataObj.toLocaleDateString('pt-BR')} às {dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                                <p className="text-[11px] text-slate-400 mt-1">
+                                  Profissional: <strong className="text-slate-600">{c.profissional?.nome || '—'}</strong> | 
+                                  Serviço: <strong className="text-slate-600">{c.servico?.nome || '—'}</strong>
+                                </p>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                {/* Botão para ir para a Consulta na Agenda */}
+                                <button
+                                  onClick={() => {
+                                    const datePart = c.dataHoraInicio.split('T')[0];
+                                    router.push(`/app/agenda?data=${datePart}&consultaId=${c.id}`);
+                                  }}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
+                                  title="Ver consulta na Agenda"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                  Ver na Agenda ↗
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Área de Observações da Consulta */}
+                            <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-4 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                  Anotações / Observações Clínicas do Atendimento
+                                </span>
+                                {!isEditing && (
+                                  <button
+                                    onClick={() => {
+                                      setEditingObsId(c.id);
+                                      setTempObs(c.observacoes || '');
+                                    }}
+                                    className="flex items-center gap-1 text-[10px] text-blue-600 hover:underline font-bold cursor-pointer"
+                                  >
+                                    <Edit3 className="w-3 h-3" />
+                                    Adicionar/Editar Nota
+                                  </button>
+                                )}
+                              </div>
+
+                              {isEditing ? (
+                                <div className="space-y-3">
+                                  <textarea
+                                    value={tempObs}
+                                    onChange={e => setTempObs(e.target.value)}
+                                    placeholder="Digite notas clínicas específicas para esta consulta (ex: receitas, evolução, queixas do paciente)..."
+                                    rows={3}
+                                    className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
+                                  />
+                                  <div className="flex justify-end gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => setEditingObsId(null)}
+                                      disabled={savingObs}
+                                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-[10px] font-bold cursor-pointer"
+                                    >
+                                      <X className="w-3 h-3" /> Cancelar
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSaveObs(c.id)}
+                                      disabled={savingObs}
+                                      className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold cursor-pointer"
+                                    >
+                                      {savingObs ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                                      Salvar
+                                    </button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                  {c.observacoes || (
+                                    <span className="text-slate-400 italic">Sem anotações registradas para esta consulta.</span>
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   ) : (
-                    <div className="text-center py-12 text-slate-400 text-xs">
-                      Nenhuma consulta agendada no histórico deste paciente.
+                    <div className="text-center py-12 bg-white border rounded-2xl text-slate-400 text-xs">
+                      Nenhuma consulta cadastrada no histórico deste paciente.
                     </div>
                   )}
                 </div>
               )}
 
-              {/* TAB 6: FINANCEIRO DO PACIENTE */}
+              {/* TAB 5: FINANCEIRO DO PACIENTE */}
               {activeTab === 'financeiro' && (
                 <div className="bg-white border rounded-2xl p-5 shadow-sm space-y-4">
                   {loadingFinanceiro ? (

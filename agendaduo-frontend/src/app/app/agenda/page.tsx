@@ -240,6 +240,22 @@ export default function AgendaPage() {
       setServicos(servRes.data);
       setPacientes(pacRes.data);
       fetchGoogleEvents();
+
+      // Tratar redirecionamento vindo do Prontuário
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramData = urlParams.get('data');
+      const paramConsultaId = urlParams.get('consultaId');
+      if (paramData) {
+        setCurrentDate(new Date(paramData + 'T12:00:00'));
+      }
+      if (paramConsultaId) {
+        const found = consRes.data.find((c: any) => c.id === paramConsultaId);
+        if (found) {
+          setSelectedConsulta(found);
+          setIsDetailsOpen(true);
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
     } catch (error) {
       toast.error('Erro ao buscar dados da agenda');
     }
