@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Calendar, Users, Briefcase, Activity, DollarSign, MessageCircle, Settings, LayoutDashboard, ChevronRight, CreditCard, Shield } from 'lucide-react';
+import { Calendar, Users, Briefcase, Activity, DollarSign, MessageCircle, Settings, LayoutDashboard, ChevronRight, CreditCard, Shield, Clipboard } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import api from '@/lib/axios';
@@ -12,6 +12,7 @@ const navItems = [
   { name: 'Dashboard', href: '/app', icon: LayoutDashboard },
   { name: 'Agenda', href: '/app/agenda', icon: Calendar },
   { name: 'Pacientes', href: '/app/pacientes', icon: Users },
+  { name: 'Prontuários', href: '/app/prontuarios', icon: Clipboard },
   { name: 'Profissionais', href: '/app/profissionais', icon: Briefcase, adminOnly: true },
   { name: 'Serviços', href: '/app/servicos', icon: Activity },
   { name: 'Financeiro', href: '/app/financeiro', icon: DollarSign },

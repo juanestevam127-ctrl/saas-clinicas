@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus, Clock, User, Stethoscope, Phone, Loader2, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import {
@@ -74,6 +75,7 @@ function maskCep(value: string) {
 }
 
 export default function AgendaPage() {
+  const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'semana' | 'dia'>('semana');
   const weekDates = getWeekDates(currentDate);
@@ -643,9 +645,18 @@ export default function AgendaPage() {
                   </div>
                   <div className="w-px h-10 bg-slate-200 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span className="font-semibold text-slate-800 text-sm truncate">{c.paciente.nome}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/app/prontuarios?pacienteId=${c.paciente.id}`);
+                        }}
+                        className="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold hover:bg-blue-100 transition-colors cursor-pointer shrink-0"
+                      >
+                        Prontuário
+                      </button>
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -908,9 +919,15 @@ export default function AgendaPage() {
           {selectedConsulta && (
             <div className="space-y-4">
               <div className="bg-slate-50 p-4 rounded-xl space-y-3">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <User className="w-4 h-4 text-slate-400" />
                   <span className="font-semibold text-slate-800">{selectedConsulta.paciente.nome}</span>
+                  <button
+                    onClick={() => router.push(`/app/prontuarios?pacienteId=${selectedConsulta.paciente.id}`)}
+                    className="px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[10px] font-bold hover:bg-blue-100 transition-colors cursor-pointer"
+                  >
+                    Ver Prontuário ↗
+                  </button>
                 </div>
                 <div className="flex items-center gap-2">
                   <Stethoscope className="w-4 h-4 text-slate-400" />

@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, DollarSign, CreditCard, Download, ArrowUpRight, Loader2, Calendar } from 'lucide-react';
+import { TrendingUp, DollarSign, CreditCard, Download, ArrowUpRight, Loader2, Calendar, Clipboard } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 
 type Lancamento = {
   id: string;
   paciente: string;
+  pacienteId: string;
   profissional: string;
   profissionalId: string;
   servico: string;
@@ -30,6 +32,7 @@ function formatCurrency(value: number) {
 }
 
 export default function FinanceiroPage() {
+  const router = useRouter();
   const [filterStatus, setFilterStatus] = useState<string>('todos');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
@@ -81,6 +84,7 @@ export default function FinanceiroPage() {
         return {
           id: c.id,
           paciente: c.paciente?.nome || 'Paciente não identificado',
+          pacienteId: c.paciente?.id || '',
           profissional: c.profissional?.nome || '—',
           profissionalId: c.profissional?.id || '',
           servico: c.servico?.nome || 'Consulta',
@@ -380,7 +384,20 @@ export default function FinanceiroPage() {
                           {l.paciente.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-800 text-sm">{l.paciente}</h4>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-slate-800 text-sm">{l.paciente}</h4>
+                            {l.pacienteId && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(`/app/prontuarios?pacienteId=${l.pacienteId}`);
+                                }}
+                                className="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold hover:bg-blue-100 transition-colors cursor-pointer"
+                              >
+                                Prontuário ↗
+                              </button>
+                            )}
+                          </div>
                           <p className="text-[11px] text-slate-500 mt-0.5">
                             {l.servico} · {l.profissional}
                           </p>

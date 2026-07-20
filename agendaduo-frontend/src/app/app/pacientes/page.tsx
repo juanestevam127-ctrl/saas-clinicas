@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Phone, Mail, ChevronRight, Loader2, Trash2 } from 'lucide-react';
+import { Plus, Search, Phone, Mail, ChevronRight, Loader2, Trash2, Clipboard } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
 import {
@@ -79,6 +80,7 @@ const emptyForm = {
 };
 
 export default function PacientesPage() {
+  const router = useRouter();
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [consultas, setConsultas] = useState<any[]>([]);
   const [search, setSearch] = useState('');
@@ -358,7 +360,19 @@ export default function PacientesPage() {
                     )}
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-400 transition-colors" />
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/app/prontuarios?pacienteId=${paciente.id}`);
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <Clipboard className="w-3.5 h-3.5" />
+                    Prontuário
+                  </button>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-400 transition-colors" />
+                </div>
               </div>
             ))
           )}

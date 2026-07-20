@@ -15,6 +15,8 @@ export const TABLES = {
   whatsappInstancias: 'sistema_clinicas_agenciaduo_whatsapp_instancias',
   financeiro: 'sistema_clinicas_agenciaduo_financeiro',
   auditoria: 'sistema_clinicas_agenciaduo_auditoria',
+  prontuariosEvolucoes: 'sistema_clinicas_agenciaduo_prontuarios_evolucoes',
+  prontuariosArquivos: 'sistema_clinicas_agenciaduo_prontuarios_arquivos',
 } as const;
 
 let _client: any = null;
