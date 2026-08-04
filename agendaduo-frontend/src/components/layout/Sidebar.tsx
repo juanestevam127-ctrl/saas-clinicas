@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 const navItems = [
   { name: 'Dashboard', href: '/app', icon: LayoutDashboard },
   { name: 'Agenda', href: '/app/agenda', icon: Calendar },
-  { name: 'Pacientes', href: '/app/pacientes', icon: Users },
+  { name: 'Clientes', href: '/app/pacientes', icon: Users },
   { name: 'Prontuários', href: '/app/prontuarios', icon: Clipboard },
   { name: 'Profissionais', href: '/app/profissionais', icon: Briefcase, adminOnly: true },
   { name: 'Serviços', href: '/app/servicos', icon: Activity },
@@ -116,7 +116,7 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
           <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
             <Calendar className="w-4 h-4 text-white" />
           </div>
-          AgendaDuo
+          MarcAI
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
             }}
             className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
           >
-            <option value="admin">🔑 Administrador (Clínica)</option>
+            <option value="admin">🔑 Administrador (Empresa)</option>
             {profissionais
               .filter(p => p.id !== localStorage.getItem('agendaduo_admin_profissional_id'))
               .map(p => (

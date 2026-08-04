@@ -51,7 +51,7 @@ export default function DashboardLayout({
 
   const handleSubscribe = async () => {
     if (!cnpjInput.trim()) {
-      toast.error('Por favor, informe o CPF ou CNPJ da clínica para realizar o pagamento.');
+      toast.error('Por favor, informe o CPF ou CNPJ da empresa para realizar o pagamento.');
       return;
     }
     setCheckoutLoading(true);
@@ -94,8 +94,8 @@ export default function DashboardLayout({
           </h2>
           <p className="text-slate-500 text-sm leading-relaxed">
             {isOverdue
-              ? 'Identificamos que a sua assinatura mensal do AgendaDuo está vencida. Para reestabelecer o acesso aos dados da sua clínica, efetue o pagamento da fatura.'
-              : 'Seus 7 dias gratuitos chegaram ao fim. Para continuar usando o AgendaDuo e gerenciar suas consultas, você precisa assinar o plano.'}
+              ? 'Identificamos que a sua assinatura mensal do MarcAI está vencida. Para reestabelecer o acesso aos dados da sua empresa, efetue o pagamento da fatura.'
+              : 'Seus 7 dias gratuitos chegaram ao fim. Para continuar usando o MarcAI e gerenciar seus atendimentos, você precisa assinar o plano.'}
           </p>
           
           <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-left space-y-2">
@@ -125,7 +125,7 @@ export default function DashboardLayout({
 
           <div className="text-left space-y-1.5 w-full">
             <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              CNPJ ou CPF da Clínica *
+              CNPJ ou CPF da Empresa *
             </label>
             <input
               type="text"
