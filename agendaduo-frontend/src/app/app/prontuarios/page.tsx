@@ -247,16 +247,16 @@ export default function ProntuariosPage() {
         <div className="space-y-1">
           <h2 className="text-base font-black text-slate-800 flex items-center gap-2">
             <Clipboard className="w-5 h-5 text-blue-600" />
-            Prontuários Clínicos
+            Prontuários de Clientes
           </h2>
-          <p className="text-xs text-slate-400">Selecione um paciente para ver o prontuário.</p>
+          <p className="text-xs text-slate-400">Selecione um cliente para ver o prontuário.</p>
         </div>
 
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Buscar paciente..."
+            placeholder="Buscar cliente..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -294,7 +294,7 @@ export default function ProntuariosPage() {
               </button>
             ))
           ) : (
-            <p className="text-center text-xs text-slate-400 py-8">Nenhum paciente encontrado</p>
+            <p className="text-center text-xs text-slate-400 py-8">Nenhum cliente encontrado</p>
           )}
         </div>
       </div>
@@ -341,7 +341,7 @@ export default function ProntuariosPage() {
                 { key: 'ficha', label: 'Ficha Cadastral', icon: User },
                 { key: 'evolucoes', label: 'Evoluções', icon: Clipboard },
                 { key: 'arquivos', label: 'Fotos & PDFs', icon: Upload },
-                { key: 'consultas', label: 'Consultas (Prontuário/Timeline)', icon: Calendar },
+                { key: 'consultas', label: 'Agendamentos', icon: Calendar },
                 { key: 'financeiro', label: 'Financeiro', icon: DollarSign },
               ].map(tab => (
                 <button
@@ -403,9 +403,9 @@ export default function ProntuariosPage() {
                   </div>
 
                   <div className="border-t pt-5 space-y-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Observações / Informações de Saúde</span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Observações / Informações</span>
                     <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl text-xs text-slate-600 whitespace-pre-wrap leading-relaxed">
-                      {selectedPaciente.observacoes || 'Nenhuma observação cadastrada para este paciente.'}
+                      {selectedPaciente.observacoes || 'Nenhuma observação cadastrada para este cliente.'}
                     </div>
                   </div>
                 </div>
@@ -757,7 +757,7 @@ export default function ProntuariosPage() {
                     </div>
                   ) : (
                     <div className="text-center py-12 text-slate-400 text-xs">
-                      Nenhuma movimentação financeira encontrada para este paciente.
+                      Nenhuma movimentação financeira encontrada para este cliente.
                     </div>
                   )}
                 </div>
@@ -770,7 +770,7 @@ export default function ProntuariosPage() {
             <Clipboard className="w-8 h-8 text-slate-300" />
             <div>
               <p className="text-sm font-bold text-slate-600">Nenhum prontuário carregado</p>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm">Use a barra lateral para pesquisar ou selecionar um paciente e abrir a ficha clínica.</p>
+              <p className="text-xs text-slate-400 mt-1 max-w-sm">Use a barra lateral para pesquisar ou selecionar um cliente e abrir a ficha.</p>
             </div>
           </div>
         )}

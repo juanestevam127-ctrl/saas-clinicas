@@ -281,8 +281,7 @@ export default function ProfissionaisPage() {
                   {/* Info */}
                   <div>
                     <h3 className="font-semibold text-slate-800 text-sm leading-tight">{prof.nome}</h3>
-                    <p className="text-xs text-blue-600 font-medium mt-0.5">{prof.especialidade || 'Clínico Geral'}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{prof.registroProfissional || 'Sem registro'}</p>
+                    <p className="text-xs text-blue-600 font-medium mt-0.5">{prof.especialidade || 'Colaborador'}</p>
                   </div>
 
                   {/* Invite controls for non-owners with pending status */}
@@ -385,7 +384,7 @@ export default function ProfissionaisPage() {
               <Input
                 value={formData.nome}
                 onChange={e => setFormData({ ...formData, nome: e.target.value })}
-                placeholder="Ex: Dr. Carlos Mendes"
+                placeholder="Ex: Carlos Mendes"
                 required
               />
             </div>
@@ -399,7 +398,7 @@ export default function ProfissionaisPage() {
                 onChange={e => setFormData({ ...formData, isOwner: e.target.checked, emailInvite: e.target.checked ? '' : formData.emailInvite })}
                 className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
               />
-              <Label htmlFor="is-owner" className="cursor-pointer font-medium text-slate-700">Este profissional sou eu (Usuário Único da Clínica)</Label>
+              <Label htmlFor="is-owner" className="cursor-pointer font-medium text-slate-700">Este profissional sou eu (Usuário Único da Empresa)</Label>
             </div>
 
             {/* Email field (only visible and enabled if NOT owner) */}
@@ -412,7 +411,7 @@ export default function ProfissionaisPage() {
                     type="email"
                     value={formData.emailInvite}
                     onChange={e => setFormData({ ...formData, emailInvite: e.target.value })}
-                    placeholder="medico@exemplo.com"
+                    placeholder="profissional@exemplo.com"
                     required={!formData.isOwner}
                     className="pl-9"
                   />
@@ -421,27 +420,17 @@ export default function ProfissionaisPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Especialidade</Label>
-                <Input
-                  value={formData.especialidade}
-                  onChange={e => setFormData({ ...formData, especialidade: e.target.value })}
-                  placeholder="Ex: Nutricionista"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Registro (CRM/CRO/...)</Label>
-                <Input
-                  value={formData.registroProfissional}
-                  onChange={e => setFormData({ ...formData, registroProfissional: e.target.value })}
-                  placeholder="CRM-SP 12345"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label>Especialidade / Profissão</Label>
+              <Input
+                value={formData.especialidade}
+                onChange={e => setFormData({ ...formData, especialidade: e.target.value })}
+                placeholder="Ex: Nutricionista, Barbeiro, Esteticista..."
+              />
             </div>
             
             <div className="space-y-2">
-              <Label>Duração Padrão de Consulta (minutos)</Label>
+              <Label>Duração Padrão do Agendamento (minutos)</Label>
               <Input
                 type="number"
                 min="5"

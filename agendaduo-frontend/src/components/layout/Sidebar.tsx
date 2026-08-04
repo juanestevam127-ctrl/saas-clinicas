@@ -112,11 +112,24 @@ export function Sidebar({ isOpen = false, onClose }: { isOpen?: boolean; onClose
     )}>
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b bg-gradient-to-r from-blue-600 to-indigo-700 shrink-0">
-        <div className="text-xl font-black text-white tracking-tight flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-            <Calendar className="w-4 h-4 text-white" />
+        <div className="text-xl font-black text-white tracking-tight flex items-center gap-2.5">
+          <div className="relative shrink-0 select-none">
+            <svg className="w-7 h-7" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="26" height="23" rx="6" stroke="currentColor" strokeWidth="2.8" className="text-white" />
+              <path d="M9 3V7" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" className="text-white" />
+              <path d="M23 3V7" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" className="text-white" />
+              <path d="M3 13H29" stroke="currentColor" strokeWidth="2.8" className="text-white" />
+              <path d="M10 20.5L14 24.5L22 16.5" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" className="text-white" />
+            </svg>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center border border-blue-600">
+              <svg className="w-2 h-2 text-blue-600" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 3.5C2 2.67157 2.67157 2 3.5 2H8.5C9.32843 2 10 2.67157 10 3.5V6.5C10 7.32843 9.32843 8 8.5 8H5.5L3 10V8H3.5H3C2.67157 8 2 7.32843 2 6.5V3.5Z" fill="currentColor"/>
+                <circle cx="4.5" cy="5" r="0.7" fill="white" />
+                <circle cx="7.5" cy="5" r="0.7" fill="white" />
+              </svg>
+            </div>
           </div>
-          MarcAI
+          <span>MarcAI</span>
         </div>
       </div>
 

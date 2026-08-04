@@ -280,14 +280,14 @@ export default function PacientesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Pacientes</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Clientes</h1>
           <p className="text-slate-500 mt-1 text-sm">
-            {`${pacientes.filter(p => p.ativo).length} pacientes ativos na clínica`}
+            {`${pacientes.filter(p => p.ativo).length} clientes ativos no negócio`}
           </p>
         </div>
         <button onClick={openNewModal} className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
           <Plus className="w-4 h-4" />
-          Novo Paciente
+          Novo Cliente
         </button>
       </div>
 
@@ -343,7 +343,7 @@ export default function PacientesPage() {
           ) : filtered.length === 0 ? (
             <div className="py-16 text-center">
               <div className="text-4xl mb-3">🔍</div>
-              <p className="text-slate-500 font-medium">Nenhum paciente encontrado</p>
+              <p className="text-slate-500 font-medium">Nenhum cliente encontrado</p>
             </div>
           ) : (
             filtered.map((paciente, i) => (
@@ -400,7 +400,7 @@ export default function PacientesPage() {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingId ? 'Editar Paciente' : 'Novo Paciente'}</DialogTitle>
+            <DialogTitle>{editingId ? 'Editar Cliente' : 'Novo Cliente'}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
             
@@ -424,7 +424,7 @@ export default function PacientesPage() {
                 onChange={e => setFormData({ ...formData, ativo: e.target.checked })}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <Label htmlFor="ativo-chk" className="cursor-pointer">Paciente Ativo (Desmarque para desativar)</Label>
+              <Label htmlFor="ativo-chk" className="cursor-pointer">Cliente Ativo (Desmarque para desativar)</Label>
             </div>
 
             {/* Telefone + CPF */}
@@ -539,11 +539,11 @@ export default function PacientesPage() {
 
             {/* Observações Gerais */}
             <div className="space-y-1.5 border-t pt-3">
-              <Label>Observações Clínicas / Informações Gerais do Paciente</Label>
+              <Label>Observações / Informações Gerais do Cliente</Label>
               <textarea
                 value={formData.observacoes}
                 onChange={e => setFormData({ ...formData, observacoes: e.target.value })}
-                placeholder="Ex: Alergias, histórico patológico, observações administrativas, etc..."
+                placeholder="Ex: Alergias, histórico, observações administrativas, etc..."
                 rows={3}
                 className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring placeholder-slate-400"
               />
@@ -557,7 +557,7 @@ export default function PacientesPage() {
                     onClick={handleDelete}
                     className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200"
                   >
-                    <Trash2 className="w-3.5 h-3.5" /> Excluir Paciente
+                    <Trash2 className="w-3.5 h-3.5" /> Excluir Cliente
                   </button>
                 )}
               </div>

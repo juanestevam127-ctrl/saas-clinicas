@@ -714,11 +714,11 @@ export default function AgendaPage() {
             
             {/* Inline Patient Autocomplete logic */}
             <div className="space-y-2 relative">
-              <Label>Paciente *</Label>
+              <Label>Cliente *</Label>
               <Input
                 value={pacienteSearch}
                 onChange={e => handlePacienteSearch(e.target.value)}
-                placeholder="Nome, CPF, Telefone ou E-mail do paciente"
+                placeholder="Nome, CPF, Telefone ou E-mail do cliente"
                 required
               />
               {pacienteSearch && !selectedPacienteId && pacientes.filter(p => {
@@ -760,7 +760,7 @@ export default function AgendaPage() {
 
             {isNewPaciente && pacienteSearch.length > 0 && (
               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-3">
-                <p className="text-xs text-blue-700 font-semibold uppercase tracking-wider">Cadastrar Paciente Novo</p>
+                <p className="text-xs text-blue-700 font-semibold uppercase tracking-wider">Cadastrar Cliente Novo</p>
                 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -934,7 +934,7 @@ export default function AgendaPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Anotações Clínicas / Observações do Agendamento</Label>
+              <Label>Anotações / Observações do Agendamento</Label>
               <textarea
                 value={formData.observacoes}
                 onChange={e => setFormData({ ...formData, observacoes: e.target.value })}

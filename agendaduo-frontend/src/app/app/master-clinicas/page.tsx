@@ -28,14 +28,14 @@ export default function MasterClinicasPage() {
       const res = await api.get('/master/clinicas');
       setClinicas(res.data || []);
     } catch {
-      toast.error('Erro ao carregar lista de clínicas');
+      toast.error('Erro ao carregar lista de empresas');
     } finally {
       setLoading(false);
     }
   };
 
   const handleImpersonate = (c: any) => {
-    // Definir os dados da clínica no localStorage
+    // Definir os dados da empresa no localStorage
     localStorage.setItem('agendaduo_clinica_id', c.id);
     localStorage.setItem('agendaduo_user_role', 'admin');
     localStorage.setItem('agendaduo_logged_role', 'admin');
@@ -47,7 +47,7 @@ export default function MasterClinicasPage() {
     // Disparar evento para atualizar o Sidebar/Header
     window.dispatchEvent(new Event('auth-profile-changed'));
     
-    toast.success(`Entrando na clínica: ${c.nome}`);
+    toast.success(`Entrando na empresa: ${c.nome}`);
     router.push('/app');
   };
 
@@ -75,11 +75,11 @@ export default function MasterClinicasPage() {
             <Shield className="w-6 h-6 text-blue-600" />
             Painel Master Admin
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Gerencie e acesse todas as clínicas cadastradas na plataforma.</p>
+          <p className="text-sm text-slate-500 mt-1">Gerencie e acesse todas as empresas cadastradas na plataforma.</p>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs bg-blue-50 text-blue-700 font-bold px-3 py-1.5 rounded-full border border-blue-100 shadow-sm">
-            Total: {clinicas.length} clínicas
+            Total: {clinicas.length} empresas
           </span>
         </div>
       </div>
@@ -89,14 +89,14 @@ export default function MasterClinicasPage() {
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input
           type="text"
-          placeholder="Buscar por clínica, CNPJ ou administrador..."
+          placeholder="Buscar por empresa, CNPJ ou administrador..."
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         />
       </div>
 
-      {/* Grid de Clínicas */}
+      {/* Grid de Empresas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((c) => (
           <div key={c.id} className="bg-white border rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
@@ -140,7 +140,7 @@ export default function MasterClinicasPage() {
 
       {filtered.length === 0 && (
         <div className="text-center py-16 bg-white border border-dashed rounded-2xl text-slate-400 text-sm">
-          Nenhuma clínica encontrada.
+          Nenhuma empresa encontrada.
         </div>
       )}
     </div>
