@@ -69,11 +69,32 @@ export default function LoginPage() {
       <div className="bg-white border rounded-2xl p-8 max-w-md w-full shadow-md space-y-6">
         
         {/* Logo e Título */}
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center mx-auto text-white shadow-md shadow-blue-200">
-            <Shield className="w-6 h-6" />
+        <div className="text-center space-y-3">
+          <div className="relative w-12 h-12 mx-auto select-none">
+            <svg className="w-12 h-12" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="26" height="23" rx="6" stroke="url(#logoGrad)" strokeWidth="2.8" />
+              <path d="M9 3V7" stroke="url(#logoGrad)" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M23 3V7" stroke="url(#logoGrad)" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M3 13H29" stroke="url(#logoGrad)" strokeWidth="2.8" />
+              <path d="M10 20.5L14 24.5L22 16.5" stroke="url(#logoGrad)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+              <defs>
+                <linearGradient id="logoGrad" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#2563EB" />
+                  <stop offset="1" stopColor="#8B5CF6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-blue-600 to-violet-600 rounded-full border border-white flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 3.5C2 2.67157 2.67157 2 3.5 2H8.5C9.32843 2 10 2.67157 10 3.5V6.5C10 7.32843 9.32843 8 8.5 8H5.5L3 10V8H3.5H3C2.67157 8 2 7.32843 2 6.5V3.5Z" fill="currentColor"/>
+                <circle cx="4.5" cy="5" r="0.7" fill="#2563EB" />
+                <circle cx="7.5" cy="5" r="0.7" fill="#2563EB" />
+              </svg>
+            </div>
           </div>
-          <h2 className="text-xl font-bold text-slate-800 tracking-tight">AgendaDuo</h2>
+          <h2 className="text-xl font-black text-slate-800 tracking-tight">
+            Marc<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">AI</span>
+          </h2>
           <p className="text-xs text-slate-400">Acesse o painel com as suas credenciais</p>
         </div>
 
@@ -89,7 +110,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="nome@clinica.com"
+                placeholder="nome@email.com.br"
                 className="flex h-10 w-full rounded-xl border border-input bg-background pl-9 pr-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               />
             </div>
