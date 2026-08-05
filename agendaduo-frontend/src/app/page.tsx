@@ -114,7 +114,7 @@ export default function LandingPage() {
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left z-10">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-[10px] font-extrabold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
-              ✨ Atendimento inteligente para o seu negócio
+              ✨ Agenda inteligente para o seu negócio
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 leading-[1.1] tracking-tight">
@@ -162,14 +162,10 @@ export default function LandingPage() {
               </div>
 
               {/* Stats Bar */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                   <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider block">Agenda Hoje</span>
                   <span className="text-lg font-black text-slate-800">8 Clientes</span>
-                </div>
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                  <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider block">Confirmados</span>
-                  <span className="text-lg font-black text-emerald-600">92%</span>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                   <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider block">Lembretes</span>
@@ -188,12 +184,12 @@ export default function LandingPage() {
                     </div>
                     <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded-full">Lembrete Enviado</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-emerald-50/50 border border-emerald-100/50 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-blue-50/50 border border-blue-100/50 rounded-xl">
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-emerald-900 truncate">Bruno Santos (Corte & Barba)</p>
-                      <p className="text-[9px] text-emerald-700">15:00 - Prof. Lucas</p>
+                      <p className="text-xs font-bold text-blue-900 truncate">Bruno Santos (Corte & Barba)</p>
+                      <p className="text-[9px] text-blue-700">15:00 - Prof. Lucas</p>
                     </div>
-                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-bold rounded-full">Confirmado</span>
+                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-bold rounded-full">Lembrete Enviado</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-slate-50 border rounded-xl opacity-75">
                     <div className="min-w-0">
@@ -207,17 +203,9 @@ export default function LandingPage() {
             </div>
 
             {/* Floating Widgets */}
-            <div className="absolute -top-5 -left-6 bg-white border rounded-xl py-2 px-3 shadow-lg flex items-center gap-2 animate-bounce duration-1000">
-              <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><Check className="w-3 h-3 stroke-[3]" /></div>
-              <span className="text-[10px] font-bold text-slate-700 whitespace-nowrap">✓ Agendamento confirmado</span>
-            </div>
             <div className="absolute top-1/2 -right-8 bg-white border rounded-xl py-2.5 px-3.5 shadow-lg flex items-center gap-2">
               <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><MessageCircle className="w-3 h-3" /></div>
               <span className="text-[10px] font-bold text-slate-700 whitespace-nowrap">💬 Lembrete enviado</span>
-            </div>
-            <div className="absolute -bottom-4 -left-3 bg-white border rounded-xl py-2.5 px-3.5 shadow-lg flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center"><Star className="w-3 h-3 fill-yellow-500 text-yellow-500" /></div>
-              <span className="text-[10px] font-bold text-slate-700 whitespace-nowrap">⭐ Avaliação recebida</span>
             </div>
             <div className="absolute bottom-12 -right-4 bg-white border rounded-xl py-2 px-3 shadow-lg flex items-center gap-2">
               <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center"><Gift className="w-3 h-3" /></div>
@@ -376,12 +364,11 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { num: "01", title: "Agendamento Criado", desc: "Sua equipe define o dia e o horário do atendimento no painel administrativo." },
-              { num: "02", title: "MarcAI Notifica", desc: "Uma mensagem com os detalhes do agendamento é enviada imediatamente via WhatsApp." },
-              { num: "03", title: "MarcAI Lembra", desc: "O cliente recebe um lembrete no dia ou horas antes do atendimento." },
-              { num: "04", title: "Atendimento Realizado", desc: "Você atende o cliente no horário agendado com toda a organização." },
-              { num: "05", title: "Pós-Atendimento", desc: "O MarcAI envia uma mensagem de agradecimento pós-visita automaticamente." },
-              { num: "06", title: "Avaliação da Empresa", desc: "O cliente recebe o link para avaliar a sua empresa de forma automatizada." },
-              { num: "07", title: "Fidelização e Relacionamento", desc: "Sua empresa parabeniza o cliente no aniversário dele e mantém o relacionamento." }
+              { num: "02", title: "MarcAI Lembra", desc: "O cliente recebe um lembrete no dia ou horas antes do atendimento." },
+              { num: "03", title: "Atendimento Realizado", desc: "Você atende o cliente no horário agendado com toda a organização." },
+              { num: "04", title: "Pós-Atendimento", desc: "O MarcAI envia uma mensagem de agradecimento pós-visita automaticamente." },
+              { num: "05", title: "Avaliação da Empresa", desc: "O cliente recebe o link para avaliar a sua empresa de forma automatizada." },
+              { num: "06", title: "Fidelização e Relacionamento", desc: "Sua empresa parabeniza o cliente no aniversário dele e mantém o relacionamento." }
             ].map((step, idx) => (
               <div key={idx} className="bg-white border rounded-2xl p-5 shadow-sm space-y-3 relative group">
                 <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">{step.num}</span>
@@ -582,7 +569,6 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              { when: "Novo agendamento cadastrado", then: "Enviar detalhes do horário agendado via WhatsApp" },
               { when: "Faltar tempo para o atendimento", then: "Enviar lembretes automáticos configurados (ex: 24h ou 2h antes)" },
               { when: "Atendimento for finalizado", then: "Enviar convite de avaliação no Google pós-serviço" },
               { when: "Cliente fizer aniversário", then: "Enviar parabéns com mensagem carinhosa automática" },
@@ -886,14 +872,11 @@ export default function LandingPage() {
               {[
                 "Agenda de atendimentos",
                 "Cadastro de clientes",
-                "Notificação de agendamentos",
                 "Lembretes automáticos via WhatsApp",
                 "Mensagens pós-atendimento",
                 "Notificações de aniversários",
                 "Pesquisa automática de avaliações",
-                "Anotações clínicas e observações",
-                "Fluxos de automações",
-                "Inteligência Artificial inclusa"
+                "Anotações e observações dos clientes"
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs text-slate-600 font-semibold">
                   <Check className="w-4 h-4 text-blue-600 shrink-0" />
