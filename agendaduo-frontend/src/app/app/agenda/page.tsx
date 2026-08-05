@@ -690,7 +690,7 @@ export default function AgendaPage() {
                       </button>
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <Stethoscope className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <Briefcase className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span className="text-xs text-slate-500">{c.profissional.nome} · {c.servico.nome}</span>
                     </div>
                   </div>
