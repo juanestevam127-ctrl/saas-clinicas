@@ -491,7 +491,7 @@ export default function ConfiguracoesPage() {
               {/* Lembretes de Aniversário */}
               <div className="border-t pt-5 mt-5 space-y-4">
                 <h3 className="text-sm font-semibold text-slate-800">Lembretes de Aniversário</h3>
-                <p className="text-xs text-slate-500">Envie mensagens automáticas de felicitações para os pacientes no dia do aniversário.</p>
+                <p className="text-xs text-slate-500">Envie mensagens automáticas de felicitações para os clientes no dia do aniversário.</p>
                 
                 <div className={`flex flex-col sm:flex-row sm:items-center gap-4 p-5 rounded-xl border transition-colors ${
                   clinica.lembreteAniversarioAtivo ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200'
@@ -520,7 +520,7 @@ export default function ConfiguracoesPage() {
                         type="time"
                         value={clinica.lembreteAniversarioHorario}
                         onChange={e => setClinica(prev => ({ ...prev, lembreteAniversarioHorario: e.target.value }))}
-                        className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-850 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   )}
@@ -581,7 +581,7 @@ export default function ConfiguracoesPage() {
                           type="text"
                           value={clinica.linkAvaliacaoGoogle}
                           onChange={e => setClinica(prev => ({ ...prev, linkAvaliacaoGoogle: e.target.value }))}
-                          placeholder="Ex: https://g.page/r/sua-clinica/review"
+                          placeholder="Ex: https://g.page/r/sua-empresa/review"
                           className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
@@ -592,7 +592,7 @@ export default function ConfiguracoesPage() {
                           type="text"
                           value={clinica.linkInstagram}
                           onChange={e => setClinica(prev => ({ ...prev, linkInstagram: e.target.value }))}
-                          placeholder="Ex: https://instagram.com/suaclinica"
+                          placeholder="Ex: https://instagram.com/suaempresa"
                           className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
@@ -604,7 +604,7 @@ export default function ConfiguracoesPage() {
               {/* Modelos de Mensagem Customizados */}
               <div className="border-t pt-5 mt-5 space-y-4">
                 <h3 className="text-sm font-semibold text-slate-800">Modelos de Mensagens (WhatsApp)</h3>
-                <p className="text-xs text-slate-500">Configure as mensagens automáticas enviadas para os seus pacientes. Use as variáveis dinâmicas disponíveis.</p>
+                <p className="text-xs text-slate-500">Configure as mensagens automáticas enviadas para os seus clientes. Use as variáveis dinâmicas disponíveis.</p>
                 
                 <div className="space-y-4">
                   {/* Lembrete Presencial */}
