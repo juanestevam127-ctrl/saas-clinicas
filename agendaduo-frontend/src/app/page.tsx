@@ -215,6 +215,31 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ---------------- SEÇÃO 01.5: VÍDEO EXPLICATIVO ---------------- */}
+      <section className="bg-slate-50 border-b py-16 px-4">
+        <div className="max-w-[1000px] mx-auto text-center space-y-10">
+          <div className="space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+              Como funciona na prática
+            </h2>
+            <p className="text-slate-500 font-medium">Veja como o MarcAI pode transformar a rotina do seu negócio.</p>
+          </div>
+          
+          <div className="relative mx-auto rounded-3xl overflow-hidden shadow-2xl border border-slate-200/60 bg-white ring-4 ring-slate-100 p-2 sm:p-4">
+            <video 
+              className="w-full rounded-2xl bg-slate-100" 
+              controls 
+              preload="metadata"
+              poster=""
+            >
+              <source src="https://arxaqnwuyesmjcsyfmbj.supabase.co/storage/v1/object/public/imagens-sem-exclusao/video%20marcai.mp4" type="video/mp4" />
+              Seu navegador não suporta a tag de vídeo.
+            </video>
+          </div>
+        </div>
+      </section>
+
+
       {/* ---------------- SEÇÃO 02: SOCIAL PROOF / TRUST FAIXA ---------------- */}
       <section className="bg-white border-y py-12 px-4">
         <div className="max-w-[1200px] mx-auto space-y-6 text-center">
