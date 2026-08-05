@@ -54,19 +54,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (fetchTicketError) throw fetchTicketError;
 
-    // Se a imagem for enviada via base64, fazer o upload pelo backend usando service_role
+    // Se a imagem for enviada via base64, fazer o upload pelo backend
     if (anexoBase64 && anexoNome) {
-      const adminDb = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      );
-      
-      // Remove o prefixo data:image/png;base64, se houver
-      const base64Data = anexoBase64.replace(/^data:image\/\w+;base64,/, '');
+      const base64Data = anexoBase64.includes(',') ? anexoBase64.split(',')[1] : anexoBase64;
       const buffer = Buffer.from(base64Data, 'base64');
       const filePath = `${ticket.clinica_id}/${id}/${Date.now()}_${anexoNome}`;
       
-      const { error: uploadError } = await adminDb.storage
+      const { error: uploadError } = await db.storage
         .from('imagens-suporte-marcai')
         .upload(filePath, buffer, { 
           contentType: anexoMimeType || 'image/png', 
@@ -76,7 +70,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       if (uploadError) {
         console.error('Erro no upload backend:', uploadError);
       } else {
-        const { data: { publicUrl } } = adminDb.storage
+        const { data: { publicUrl } } = db.storage
           .from('imagens-suporte-marcai')
           .getPublicUrl(filePath);
         finalAnexoUrl = publicUrl;
