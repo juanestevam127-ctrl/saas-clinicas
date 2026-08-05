@@ -86,7 +86,7 @@ export default function LandingPage() {
 
           {/* Center navigation */}
           <div className="hidden md:flex items-center gap-7">
-            <a href="#produto" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-wider">Produto</a>
+            <a href="#hero" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-wider">Produto</a>
             <a href="#recursos" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-wider">Recursos</a>
             <a href="#como-funciona" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-wider">Como funciona</a>
             <a href="#para-quem-e" className="text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-wider">Público</a>
@@ -361,7 +361,7 @@ export default function LandingPage() {
           </div>
 
           {/* Timeline Process Flow */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { num: "01", title: "Agendamento Criado", desc: "Sua equipe define o dia e o horário do atendimento no painel administrativo." },
               { num: "02", title: "MarcAI Lembra", desc: "O cliente recebe um lembrete no dia ou horas antes do atendimento." },
@@ -567,7 +567,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               { when: "Faltar tempo para o atendimento", then: "Enviar lembretes automáticos configurados (ex: 24h ou 2h antes)" },
               { when: "Atendimento for finalizado", then: "Enviar convite de avaliação no Google pós-serviço" },
@@ -711,7 +711,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---------------- SEÇÃO 15: BENEFÍCIOS ---------------- */}
-      <section className="py-24 px-4 bg-slate-50 border-b">
+      <section id="recursos" className="py-24 px-4 bg-slate-50 border-b">
         <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-3">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Mais do que uma agenda.</h2>
