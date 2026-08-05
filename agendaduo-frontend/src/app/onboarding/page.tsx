@@ -143,7 +143,34 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="bg-white border-b px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div className="font-black text-xl text-blue-600 tracking-tight">AgendaDuo</div>
+        {/* MarcAI Logo */}
+        <div className="flex items-center gap-2.5 font-sans">
+          <div className="relative shrink-0 select-none">
+            <svg className="w-6 h-6" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="6" width="26" height="23" rx="6" stroke="url(#obGrad)" strokeWidth="2.8" />
+              <path d="M9 3V7" stroke="url(#obGrad)" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M23 3V7" stroke="url(#obGrad)" strokeWidth="2.8" strokeLinecap="round" />
+              <path d="M3 13H29" stroke="url(#obGrad)" strokeWidth="2.8" />
+              <path d="M10 20.5L14 24.5L22 16.5" stroke="url(#obGrad)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+              <defs>
+                <linearGradient id="obGrad" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#2563EB" />
+                  <stop offset="1" stopColor="#8B5CF6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-blue-600 to-violet-600 rounded-full border border-white flex items-center justify-center">
+              <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 12 12" fill="none">
+                <path d="M2 3.5C2 2.67157 2.67157 2 3.5 2H8.5C9.32843 2 10 2.67157 10 3.5V6.5C10 7.32843 9.32843 8 8.5 8H5.5L3 10V8H3.5H3C2.67157 8 2 7.32843 2 6.5V3.5Z" fill="currentColor"/>
+                <circle cx="4.5" cy="5" r="0.7" fill="#2563EB" />
+                <circle cx="7.5" cy="5" r="0.7" fill="#2563EB" />
+              </svg>
+            </div>
+          </div>
+          <span className="text-xl font-black tracking-tight text-slate-800">
+            Marc<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">AI</span>
+          </span>
+        </div>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map(s => (
             <div key={s} className={`w-12 h-2 rounded-full transition-colors ${s <= step ? 'bg-blue-600' : 'bg-slate-200'}`} />
@@ -160,15 +187,15 @@ export default function OnboardingPage() {
               <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
                 <Hospital className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-black text-slate-900">Sobre a sua Clínica</h2>
-              <p className="text-slate-500 text-sm">Como os seus pacientes conhecem o seu espaço?</p>
+              <h2 className="text-2xl font-black text-slate-900">Sobre a sua Empresa</h2>
+              <p className="text-slate-500 text-sm">Como os seus clientes conhecem o seu negócio?</p>
               
               <div className="space-y-4 pt-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-700">Nome da Clínica (obrigatório)</label>
+                  <label className="text-xs font-semibold text-slate-700">Nome da Empresa (obrigatório)</label>
                   <input
                     className="w-full px-4 py-2.5 rounded-xl border bg-slate-50 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    placeholder="Ex: Clínica Sorriso"
+                    placeholder="Ex: Nome da Empresa"
                     value={clinica.nome}
                     onChange={e => setClinica({...clinica, nome: e.target.value})}
                   />
@@ -289,7 +316,7 @@ export default function OnboardingPage() {
                 <Clock className="w-6 h-6" />
               </div>
               <h2 className="text-2xl font-black text-slate-900">Horário de Funcionamento</h2>
-              <p className="text-slate-500 text-sm">Configure os dias e horários de atendimento da clínica.</p>
+              <p className="text-slate-500 text-sm">Configure os dias e horários de atendimento da empresa.</p>
               
               <div className="space-y-2 mt-4 max-h-[400px] overflow-y-auto pr-2">
                 {diasSemana.map((dia, i) => (
@@ -340,14 +367,14 @@ export default function OnboardingPage() {
               <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
                 <Bell className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-black text-slate-900">Lembretes de Consulta</h2>
-              <p className="text-slate-500 text-sm">O AgendaDuo envia mensagens automáticas para seus pacientes lembrarem da consulta. Escolha a antecedência:</p>
+              <h2 className="text-2xl font-black text-slate-900">Lembretes de Agendamento</h2>
+              <p className="text-slate-500 text-sm">O MarcAI envia mensagens automáticas para seus clientes lembrarem do agendamento. Escolha a antecedência:</p>
               
               <div className="space-y-3 pt-4">
                 {[
-                  { key: 'h24' as const, label: 'Lembrete 24 horas antes', desc: 'Enviado um dia antes da consulta' },
-                  { key: 'h2' as const, label: 'Lembrete 2 horas antes', desc: 'Enviado 2 horas antes da consulta' },
-                  { key: 'h1' as const, label: 'Lembrete 1 hora antes', desc: 'Enviado 1 hora antes da consulta' },
+                  { key: 'h24' as const, label: 'Lembrete 24 horas antes', desc: 'Enviado um dia antes do agendamento' },
+                  { key: 'h2' as const, label: 'Lembrete 2 horas antes', desc: 'Enviado 2 horas antes do agendamento' },
+                  { key: 'h1' as const, label: 'Lembrete 1 hora antes', desc: 'Enviado 1 hora antes do agendamento' },
                 ].map(l => (
                   <div key={l.key} className={`flex items-center gap-4 p-5 rounded-xl border transition-colors ${
                     lembretes[l.key] ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'
