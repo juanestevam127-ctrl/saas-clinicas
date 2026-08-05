@@ -79,7 +79,7 @@ export default function LandingPage() {
           ? 'bg-white/80 backdrop-blur-md border-b border-slate-200/80 py-3.5 shadow-sm shadow-slate-100/50' 
           : 'bg-transparent py-5'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between">
           <Link href="/">
             <MarcAiLogo className="w-7 h-7" />
           </Link>
@@ -108,7 +108,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 01: HERO ---------------- */}
       <section id="hero" className="relative pt-32 pb-24 md:pt-40 md:pb-32 px-4 overflow-hidden bg-gradient-to-b from-blue-50/50 via-slate-50 to-slate-50">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Text */}
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left z-10">
@@ -229,7 +229,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 02: SOCIAL PROOF / TRUST FAIXA ---------------- */}
       <section className="bg-white border-y py-12 px-4">
-        <div className="max-w-7xl mx-auto space-y-6 text-center">
+        <div className="max-w-[1200px] mx-auto space-y-6 text-center">
           <p className="text-xs uppercase font-extrabold text-slate-400 tracking-wider">Feito para quem vive de atender clientes.</p>
           <div className="flex flex-wrap justify-center gap-2 sm:gap-3 text-xs font-bold text-slate-600">
             {["Barbearias", "Salões de Beleza", "Clínicas de Estética", "Dentistas", "Psicólogos", "Fisioterapeutas", "Personal Trainers", "Profissionais Autônomos", "Estúdios de Tattoo"].map((tag, idx) => (
@@ -244,7 +244,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 03: O PROBLEMA ---------------- */}
       <section className="py-24 px-4 bg-slate-50 border-b">
-        <div className="max-w-5xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               Você começou um negócio para atender clientes.<br />
@@ -308,7 +308,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 04: A TRANSFORMAÇÃO (ANTES/DEPOIS) ---------------- */}
       <section className="py-24 px-4 bg-white border-b">
-        <div className="max-w-5xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-3">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Menos atrito manual. Mais controle.</h2>
             <p className="text-slate-500 text-sm font-semibold">Compare a rotina tradicional com a produtividade do MarcAI.</p>
@@ -324,10 +324,10 @@ export default function LandingPage() {
               <ul className="space-y-3">
                 {[
                   "Responder cada cliente individualmente para achar horário",
-                  "Confirmar a agenda manualmente no final do dia",
+                  "Organizar a agenda manualmente em papel ou planilhas",
                   "Enviar lembretes no dia anterior um por um",
-                  "Procurar histórico de atendimento em anotações de papel",
-                  "Remercurar e pedir avaliações de forma tímida",
+                  "Procurar histórico do cliente em anotações perdidas",
+                  "Pedir avaliações de forma manual ou tímida",
                   "Esquecer de parabenizar no aniversário ou oferecer retorno",
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-600 font-medium">
@@ -346,11 +346,11 @@ export default function LandingPage() {
               <ul className="space-y-3">
                 {[
                   "Visualização de horários limpa e sem complicação",
-                  "Confirmações automáticas enviadas no ato da reserva",
+                  "Mensagem de aviso enviada no ato do agendamento",
                   "Lembretes automáticos que reduzem faltas em até 85%",
                   "Histórico do cliente organizado e centralizado na nuvem",
                   "Pós-atendimento com solicitação de avaliações automática",
-                  "Fidelização contínua com mensagens de aniversário e retorno",
+                  "Fidelização contínua com lembrete de aniversário automático",
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 font-bold">
                     <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
@@ -366,7 +366,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 05: COMO O MARCAI FUNCIONA ---------------- */}
       <section id="como-funciona" className="py-24 px-4 bg-slate-50 border-b">
-        <div className="max-w-6xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Do primeiro contato ao próximo agendamento.</h2>
             <p className="text-slate-500 text-sm font-semibold">Conheça o ciclo automatizado do MarcAI que acompanha toda a jornada do seu cliente.</p>
@@ -375,13 +375,13 @@ export default function LandingPage() {
           {/* Timeline Process Flow */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { num: "01", title: "Cliente Agenda", desc: "Você ou seu cliente define o dia e o horário do atendimento." },
-              { num: "02", title: "MarcAI Confirma", desc: "Uma mensagem de confirmação instantânea é enviada ao cliente via WhatsApp." },
+              { num: "01", title: "Agendamento Criado", desc: "Sua equipe define o dia e o horário do atendimento no painel administrativo." },
+              { num: "02", title: "MarcAI Notifica", desc: "Uma mensagem com os detalhes do agendamento é enviada imediatamente via WhatsApp." },
               { num: "03", title: "MarcAI Lembra", desc: "O cliente recebe um lembrete no dia ou horas antes do atendimento." },
-              { num: "04", title: "Atendimento", desc: "Você recebe o cliente no horário agendado com toda a organização necessária." },
+              { num: "04", title: "Atendimento Realizado", desc: "Você atende o cliente no horário agendado com toda a organização." },
               { num: "05", title: "Pós-Atendimento", desc: "O MarcAI envia uma mensagem de agradecimento pós-visita automaticamente." },
-              { num: "06", title: "Avaliação", desc: "O cliente recebe o link para avaliar a sua empresa de forma automatizada." },
-              { num: "07", title: "Novo Agendamento", desc: "Seu negócio continua presente na mente do cliente para novas marcações." }
+              { num: "06", title: "Avaliação da Empresa", desc: "O cliente recebe o link para avaliar a sua empresa de forma automatizada." },
+              { num: "07", title: "Fidelização e Relacionamento", desc: "Sua empresa parabeniza o cliente no aniversário dele e mantém o relacionamento." }
             ].map((step, idx) => (
               <div key={idx} className="bg-white border rounded-2xl p-5 shadow-sm space-y-3 relative group">
                 <span className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">{step.num}</span>
@@ -401,7 +401,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 06: WHATSAPP INTEGRATION ---------------- */}
       <section className="py-24 px-4 bg-white border-b">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Text Left */}
           <div className="lg:col-span-5 space-y-6">
@@ -474,7 +474,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 07: AGENDA MOCKUP ---------------- */}
       <section className="py-24 px-4 bg-slate-50 border-b">
-        <div className="max-w-5xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Uma agenda que entende a rotina do seu negócio.</h2>
             <p className="text-slate-500 text-sm font-semibold max-w-xl mx-auto">
@@ -521,7 +521,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 08: CLIENTES (CRM) ---------------- */}
       <section className="py-24 px-4 bg-white border-b">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Card Left */}
           <div className="lg:col-span-7 bg-slate-50 border rounded-3xl p-5 sm:p-6 shadow-sm space-y-4 max-w-lg mx-auto w-full">
@@ -572,7 +572,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 09: AUTOMAÇÕES (WORKFLOW) ---------------- */}
       <section id="automacoes" className="py-24 px-4 bg-slate-50 border-b">
-        <div className="max-w-5xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Configure uma vez. O MarcAI faz o resto.</h2>
             <p className="text-slate-500 text-sm font-semibold max-w-xl mx-auto">
@@ -582,10 +582,10 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              { when: "Quando um cliente agendar", then: "Enviar confirmação instantânea via WhatsApp" },
-              { when: "Faltar 1 dia para o atendimento", then: "Enviar lembrete e aguardar confirmação de presença" },
-              { when: "Atendimento for finalizado", then: "Enviar agradecimento pós-serviço e link de avaliação" },
-              { when: "Cliente fizer aniversário", then: "Enviar parabéns com um cupom/desconto especial" },
+              { when: "Novo agendamento cadastrado", then: "Enviar detalhes do horário agendado via WhatsApp" },
+              { when: "Faltar tempo para o atendimento", then: "Enviar lembretes automáticos configurados (ex: 24h ou 2h antes)" },
+              { when: "Atendimento for finalizado", then: "Enviar convite de avaliação no Google pós-serviço" },
+              { when: "Cliente fizer aniversário", then: "Enviar parabéns com mensagem carinhosa automática" },
             ].map((flow, idx) => (
               <div key={idx} className="bg-white border rounded-2xl p-5 shadow-sm space-y-3">
                 <div className="flex items-center gap-2 text-[10px] font-extrabold uppercase text-blue-600">
@@ -606,72 +606,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---------------- SEÇÃO 10: INTELIGÊNCIA ARTIFICIAL ---------------- */}
-      <section className="py-24 px-4 bg-white border-b">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Text Left */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 text-violet-700 rounded-full text-[9px] font-extrabold uppercase tracking-wider">
-              <Sparkles className="w-3 h-3" /> IA Integrada
-            </div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">
-              Mais inteligência para o seu atendimento.
-            </h2>
-            <p className="text-sm font-semibold text-slate-500 leading-relaxed">
-              O MarcAI usa Inteligência Artificial para responder dúvidas básicas de agenda e horários com linguagem humana e natural, economizando tempo do seu negócio.
-            </p>
 
-            <div className="grid grid-cols-2 gap-3 text-[10px] font-bold text-slate-700">
-              <div className="p-3 bg-slate-50 rounded-xl">🤖 Atendimento Inteligente</div>
-              <div className="p-3 bg-slate-50 rounded-xl">💬 Conversas Naturais</div>
-              <div className="p-3 bg-slate-50 rounded-xl">⚡ Respostas Rápidas</div>
-              <div className="p-3 bg-slate-50 rounded-xl">📅 Agendamento via Chat</div>
-            </div>
-          </div>
-
-          {/* AI Chat Conversation Mockup */}
-          <div className="lg:col-span-7 bg-slate-900 rounded-[36px] p-4 shadow-2xl relative max-w-sm mx-auto w-full">
-            <div className="bg-slate-800 text-white rounded-[28px] overflow-hidden border border-slate-700">
-              
-              {/* Phone Header */}
-              <div className="bg-violet-900 p-3.5 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center font-bold text-xs text-white">
-                  AI
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] font-bold truncate">MarcAI Assistente</h4>
-                  <p className="text-[8px] text-violet-200">Atendimento Inteligente Ativo</p>
-                </div>
-              </div>
-
-              {/* Chat Content */}
-              <div className="p-4 space-y-4 min-h-[250px] bg-slate-950 font-sans text-[10px]">
-                
-                {/* Client Msg */}
-                <div className="bg-slate-800 text-slate-200 p-3 rounded-2xl rounded-tr-none max-w-[80%] ml-auto text-right">
-                  <p className="leading-relaxed">
-                    "Oi, tem horário livre amanhã na parte da tarde?"
-                  </p>
-                </div>
-
-                {/* AI Msg */}
-                <div className="bg-violet-950 border border-violet-900 text-violet-100 p-3 rounded-2xl rounded-tl-none max-w-[85%] space-y-1">
-                  <p className="leading-relaxed">
-                    "Olá! 😊 Temos sim. Tenho disponibilidade com a Paula às <strong>14h</strong> e às <strong>16h</strong>. Qual horário funciona melhor para você?"
-                  </p>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
 
       {/* ---------------- SEÇÃO 11: ANIVERSÁRIOS ---------------- */}
       <section className="py-20 px-4 bg-slate-50 border-b">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-7 space-y-4 text-center md:text-left">
             <h3 className="text-2xl font-black text-slate-800">Não deixe seus clientes esquecerem de você.</h3>
             <p className="text-sm font-semibold text-slate-400 max-w-md">
@@ -713,7 +652,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 13: AVALIAÇÕES (REPUTAÇÃO) ---------------- */}
       <section className="py-24 px-4 bg-slate-50 border-b">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           <div className="lg:col-span-5 space-y-6">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">
@@ -748,7 +687,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 14: PARA QUEM É (NICHE GRID) ---------------- */}
       <section id="para-quem-e" className="py-24 px-4 bg-white border-b">
-        <div className="max-w-6xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Feito para quem trabalha com clientes e horários.</h2>
             <p className="text-slate-500 text-sm font-semibold">Toda a flexibilidade que profissionais prestadores de serviços precisam no dia a dia.</p>
@@ -787,7 +726,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 15: BENEFÍCIOS ---------------- */}
       <section className="py-24 px-4 bg-slate-50 border-b">
-        <div className="max-w-6xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-3">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Mais do que uma agenda.</h2>
             <p className="text-slate-500 text-sm font-semibold">Tudo o que você precisa para alavancar os resultados da sua prestação de serviço.</p>
@@ -816,7 +755,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 16: DASHBOARD COMPLETO (DEMO) ---------------- */}
       <section className="py-24 px-4 bg-white border-b">
-        <div className="max-w-6xl mx-auto space-y-16">
+        <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Tudo o que acontece no seu negócio, em um só lugar.</h2>
             <p className="text-slate-500 text-sm font-semibold max-w-xl mx-auto">
@@ -898,15 +837,15 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 18: EXPERIÊNCIA DO CLIENTE ---------------- */}
       <section className="py-24 px-4 bg-white border-b">
-        <div className="max-w-5xl mx-auto space-y-12">
+        <div className="max-w-[1200px] mx-auto space-y-12">
           <div className="text-center space-y-3">
             <h2 className="text-3xl font-black text-slate-900">Seu cliente percebe a diferença.</h2>
-            <p className="text-slate-500 text-sm font-semibold">Ofereça uma experiência digna de grandes marcas de tecnologia.</p>
+            <p className="text-slate-500 text-sm font-semibold">Ofereça uma experiência organizada e de alta qualidade.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4 text-center text-xs font-bold text-slate-700">
-            <div className="bg-slate-50 border p-4 rounded-xl">📱 Escolhe Horário</div>
-            <div className="bg-slate-50 border p-4 rounded-xl">✅ Recebe Confirmação</div>
+            <div className="bg-slate-50 border p-4 rounded-xl">📅 Agendamento Criado</div>
+            <div className="bg-slate-50 border p-4 rounded-xl">💬 Detalhes por WhatsApp</div>
             <div className="bg-slate-50 border p-4 rounded-xl">🔔 Recebe Lembrete</div>
             <div className="bg-slate-50 border p-4 rounded-xl">😊 É Atendido</div>
             <div className="bg-slate-50 border p-4 rounded-xl">⭐ Avalia o Serviço</div>
@@ -1121,7 +1060,7 @@ export default function LandingPage() {
 
       {/* ---------------- SEÇÃO 23: FOOTER ---------------- */}
       <footer className="bg-white border-t py-16 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 border-b pb-12">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 border-b pb-12">
           
           <div className="md:col-span-4 space-y-4">
             <MarcAiLogo className="w-6 h-6" />
@@ -1166,7 +1105,7 @@ export default function LandingPage() {
 
         </div>
 
-        <div className="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1200px] mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="text-[10px] text-slate-400 font-bold">
             © 2026 MarcAI. Todos os direitos reservados.
           </span>
