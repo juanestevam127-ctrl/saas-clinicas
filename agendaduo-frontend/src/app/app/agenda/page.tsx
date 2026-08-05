@@ -469,27 +469,7 @@ export default function AgendaPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {currentProfData && (
-            currentProfData.googleAccessToken ? (
-              <button
-                onClick={handleGoogleDisconnect}
-                disabled={googleLoading}
-                className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs font-semibold rounded-xl border border-emerald-200 transition-colors cursor-pointer"
-                title="Google Agenda Conectada. Clique para desconectar."
-              >
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Google Agenda Ativa
-              </button>
-            ) : (
-              <button
-                onClick={handleGoogleConnect}
-                disabled={googleLoading}
-                className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold rounded-xl border border-slate-200 transition-colors cursor-pointer"
-              >
-                Vincular Google Agenda
-              </button>
-            )
-          )}
+
           <button
             onClick={handleOpenNewModal}
             className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
