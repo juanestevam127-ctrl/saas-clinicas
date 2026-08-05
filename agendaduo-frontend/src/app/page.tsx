@@ -413,7 +413,7 @@ export default function LandingPage() {
             </p>
 
             <div className="space-y-3">
-              {["Confirmações automáticas", "Lembretes pré-atendimento", "Mensagens de pós-venda", "Pesquisas de avaliação", "Parabéns no aniversário"].map((item, idx) => (
+              {["Aviso de novo agendamento", "Lembretes pré-atendimento", "Mensagens de pós-venda", "Pesquisas de avaliação", "Parabéns no aniversário"].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-xs font-bold text-slate-700">
                   <Check className="w-4.5 h-4.5 text-emerald-500 stroke-[3]" />
                   <span>{item}</span>
@@ -444,7 +444,7 @@ export default function LandingPage() {
                 <div className="bg-emerald-900 border border-emerald-800 text-white p-3 rounded-2xl rounded-tl-none max-w-[85%] text-[10px] space-y-1">
                   <p className="leading-relaxed">
                     Olá, Ana! 😊<br />
-                    Seu atendimento com a <strong>Marcela</strong> está confirmado para amanhã, às <strong>14h</strong>.
+                    Seu agendamento com a <strong>Marcela</strong> foi cadastrado para amanhã, às <strong>14h</strong>.
                   </p>
                   <span className="text-[7px] text-emerald-300 block text-right">Ontem 18:00</span>
                 </div>
@@ -886,7 +886,7 @@ export default function LandingPage() {
               {[
                 "Agenda de atendimentos",
                 "Cadastro de clientes",
-                "Envio de confirmações automáticas",
+                "Notificação de agendamentos",
                 "Lembretes automáticos via WhatsApp",
                 "Mensagens pós-atendimento",
                 "Notificações de aniversários",
@@ -930,14 +930,12 @@ export default function LandingPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {[
-                  { feature: "Agenda & Calendário", bad: "Manual / Papel", good: "Centralizada e Inteligente" },
+                  { feature: "Agenda & Calendário", bad: "Manual / Papel", good: "Centralizada e Organizadora" },
                   { feature: "Lembretes de Presença", bad: "Um a um no celular", good: "Automáticos no WhatsApp" },
-                  { feature: "Confirmações de Horário", bad: "Manual / Sob demanda", good: "Instantes pós-cadastro" },
                   { feature: "Histórico de Clientes", bad: "Perdido em papéis/conversas", good: "Organizado no sistema" },
                   { feature: "Mensagens Pós-visita", bad: "Raramente feitas", good: "Automatizadas pós-atendimento" },
                   { feature: "Pedido de Avaliação", bad: "Esquecido", good: "Automático por link" },
-                  { feature: "Notificar Aniversários", bad: "Esquecido", good: "Automático no WhatsApp" },
-                  { feature: "Assistência de IA", bad: "Não disponível", good: "Disponível 24h por dia" }
+                  { feature: "Notificar Aniversários", bad: "Esquecido", good: "Automático no WhatsApp" }
                 ].map((row, idx) => (
                   <tr key={idx} className="hover:bg-slate-50/50">
                     <td className="py-3.5 px-4 font-bold text-slate-900">{row.feature}</td>
@@ -971,7 +969,7 @@ export default function LandingPage() {
               },
               {
                 q: "O MarcAI é apenas uma agenda?",
-                a: "Não! Além do calendário de organização, ele gerencia o cadastro de clientes, envia lembretes e confirmações automáticas por WhatsApp, parabeniza aniversariantes, solicita avaliações pós-atendimento e conta com recursos de Inteligência Artificial."
+                a: "Não! Além do calendário de organização, ele gerencia o cadastro de clientes, envia lembretes e notificações por WhatsApp, parabeniza aniversariantes no aniversário e solicita avaliações pós-atendimento automaticamente."
               },
               {
                 q: "Como funcionam os lembretes?",
@@ -989,10 +987,7 @@ export default function LandingPage() {
                 q: "Preciso entender de tecnologia?",
                 a: "De forma alguma! A interface foi desenhada para ser simples, limpa e amigável. A configuração inicial é intuitiva e rápida."
               },
-              {
-                q: "Como funciona a Inteligência Artificial?",
-                a: "A IA do MarcAI auxilia a responder clientes com dúvidas sobre horários disponíveis e serviços, simulando uma conversa natural e humana no WhatsApp."
-              },
+
               {
                 q: "Posso testar gratuitamente?",
                 a: "Sim! Você tem 7 dias de teste completo gratuito, sem precisar cadastrar cartão de crédito."
