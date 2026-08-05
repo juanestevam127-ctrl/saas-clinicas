@@ -114,12 +114,14 @@ export default function TicketDetailsPage({ params }: { params: Promise<{ id: st
       const remetenteNome = isMaster 
         ? 'Suporte MarcAI' 
         : (localStorage.getItem('agendaduo_user_name') || 'Usuário');
+      const remetenteId = isMaster ? 'master' : (localStorage.getItem('agendaduo_user_profissional_id') || 'desconhecido');
 
       await api.post(`/suporte/${id}`, {
         mensagem: novaMensagem,
         anexoUrl,
         remetenteTipo: isMaster ? 'master' : 'cliente',
-        remetenteNome
+        remetenteNome,
+        remetenteId
       });
 
       setNovaMensagem('');

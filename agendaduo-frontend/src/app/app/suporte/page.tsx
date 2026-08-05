@@ -41,10 +41,14 @@ export default function SuportePage() {
     setSubmitting(true);
     try {
       const remetenteNome = localStorage.getItem('agendaduo_user_name') || 'Usuário';
+      const profissionalId = localStorage.getItem('agendaduo_user_profissional_id') || '';
+      
       const { data } = await api.post('/suporte', {
         assunto: novoAssunto,
         mensagem: novaMensagem,
         remetenteNome
+      }, {
+        headers: { 'x-profissional-id': profissionalId }
       });
       toast.success('Chamado aberto com sucesso!');
       setIsCriando(false);
