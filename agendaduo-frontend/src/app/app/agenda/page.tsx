@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Clock, User, Stethoscope, Phone, Loader2, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Clock, User, Briefcase, Phone, Loader2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
@@ -956,7 +956,7 @@ export default function AgendaPage() {
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-w-xl">
           <DialogHeader>
-            <DialogTitle>Detalhes da Consulta</DialogTitle>
+            <DialogTitle>Detalhes do Agendamento</DialogTitle>
           </DialogHeader>
           {selectedConsulta && (
             <div className="space-y-4">
@@ -972,7 +972,7 @@ export default function AgendaPage() {
                   </button>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Stethoscope className="w-4 h-4 text-slate-400" />
+                  <Briefcase className="w-4 h-4 text-slate-400" />
                   <span className="text-sm text-slate-600">{selectedConsulta.profissional.nome}</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1013,7 +1013,7 @@ export default function AgendaPage() {
               
               {/* Observações da Consulta */}
               <div className="space-y-2 border-t pt-3">
-                <Label>Anotações Clínicas / Observações da Consulta</Label>
+                <Label>Anotações / Observações</Label>
                 <textarea
                   value={editingObservacoes}
                   onChange={e => setEditingObservacoes(e.target.value)}
@@ -1045,7 +1045,7 @@ export default function AgendaPage() {
                   onClick={() => handleDeleteConsulta(selectedConsulta.id)}
                   className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200"
                 >
-                  <Trash2 className="w-3.5 h-3.5" /> Excluir Consulta
+                  <Trash2 className="w-3.5 h-3.5" /> Excluir Agendamento
                 </button>
               </div>
             </div>
