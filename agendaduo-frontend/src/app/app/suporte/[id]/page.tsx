@@ -68,32 +68,13 @@ export default function TicketDetailsPage({ params }: { params: Promise<{ id: st
     setImagemFila(file);
   };
 
-  const uploadImage = async (file: File): Promise<string | null> => {
-    setUploadingImage(true);
-    try {
-      const db = getSupabase();
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-      const filePath = `${ticket.clinica_id}/${id}/${fileName}`;
-
-      const { error: uploadError, data } = await db.storage
-        .from('imagens-suporte-marcai')
-        .upload(filePath, file, { cacheControl: '3600', upsert: false });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = db.storage
-        .from('imagens-suporte-marcai')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
-    } catch (err: any) {
-      console.error(err);
-      toast.error('Erro ao fazer upload da imagem.');
-      return null;
-    } finally {
-      setUploadingImage(false);
-    }
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -101,14 +82,16 @@ export default function TicketDetailsPage({ params }: { params: Promise<{ id: st
     if (!novaMensagem.trim() && !imagemFila) return;
 
     setEnviando(true);
+    setUploadingImage(!!imagemFila);
     try {
-      let anexoUrl = null;
+      let anexoBase64 = null;
+      let anexoNome = null;
+      let anexoMimeType = null;
+      
       if (imagemFila) {
-        anexoUrl = await uploadImage(imagemFila);
-        if (!anexoUrl) {
-          setEnviando(false);
-          return; // Falha no upload interrompe o envio
-        }
+        anexoBase64 = await fileToBase64(imagemFila);
+        anexoNome = imagemFila.name;
+        anexoMimeType = imagemFila.type;
       }
 
       const remetenteNome = isMaster 
@@ -118,7 +101,9 @@ export default function TicketDetailsPage({ params }: { params: Promise<{ id: st
 
       await api.post(`/suporte/${id}`, {
         mensagem: novaMensagem,
-        anexoUrl,
+        anexoBase64,
+        anexoNome,
+        anexoMimeType,
         remetenteTipo: isMaster ? 'master' : 'cliente',
         remetenteNome,
         remetenteId
@@ -131,6 +116,7 @@ export default function TicketDetailsPage({ params }: { params: Promise<{ id: st
       toast.error('Erro ao enviar mensagem.');
     } finally {
       setEnviando(false);
+      setUploadingImage(false);
     }
   };
 

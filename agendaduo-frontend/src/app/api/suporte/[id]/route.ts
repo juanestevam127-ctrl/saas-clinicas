@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { getSupabase } from '@/lib/supabase';
 
 function err(msg: string, status = 400) {
@@ -38,13 +39,53 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     const { id } = await params;
     const body = await req.json();
-    const { mensagem, anexoUrl, remetenteTipo, remetenteId, remetenteNome, novoStatus } = body;
+    const { mensagem, anexoUrl, anexoBase64, anexoNome, anexoMimeType, remetenteTipo, remetenteId, remetenteNome, novoStatus } = body;
     
-    if (!mensagem && !novoStatus) return err('Mensagem ou novo status são obrigatórios');
-
     const db = getSupabase();
+    
+    let finalAnexoUrl = anexoUrl;
 
-    if (mensagem) {
+    // Buscar o ticket para saber o clinica_id caso precise do upload
+    const { data: ticket, error: fetchTicketError } = await db
+      .from('sistema_clinicas_agenciaduo_suporte_tickets')
+      .select('clinica_id')
+      .eq('id', id)
+      .single();
+
+    if (fetchTicketError) throw fetchTicketError;
+
+    // Se a imagem for enviada via base64, fazer o upload pelo backend usando service_role
+    if (anexoBase64 && anexoNome) {
+      const adminDb = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      // Remove o prefixo data:image/png;base64, se houver
+      const base64Data = anexoBase64.replace(/^data:image\/\w+;base64,/, '');
+      const buffer = Buffer.from(base64Data, 'base64');
+      const filePath = `${ticket.clinica_id}/${id}/${Date.now()}_${anexoNome}`;
+      
+      const { error: uploadError } = await adminDb.storage
+        .from('imagens-suporte-marcai')
+        .upload(filePath, buffer, { 
+          contentType: anexoMimeType || 'image/png', 
+          upsert: false 
+        });
+        
+      if (uploadError) {
+        console.error('Erro no upload backend:', uploadError);
+      } else {
+        const { data: { publicUrl } } = adminDb.storage
+          .from('imagens-suporte-marcai')
+          .getPublicUrl(filePath);
+        finalAnexoUrl = publicUrl;
+      }
+    }
+
+    if (!mensagem && !finalAnexoUrl && !novoStatus) return err('Mensagem ou novo status são obrigatórios');
+
+    if (mensagem || finalAnexoUrl) {
       const { error: msgError } = await db
         .from('sistema_clinicas_agenciaduo_suporte_mensagens')
         .insert({
@@ -52,8 +93,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           remetente_tipo: remetenteTipo || 'cliente',
           remetente_id: remetenteId || 'desconhecido',
           remetente_nome: remetenteNome || 'Usuário',
-          mensagem,
-          anexo_url: anexoUrl || null
+          mensagem: mensagem || null,
+          anexo_url: finalAnexoUrl || null
         });
 
       if (msgError) throw msgError;
