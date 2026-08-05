@@ -216,7 +216,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---------------- SEÇÃO 01.5: VÍDEO EXPLICATIVO ---------------- */}
-      <section className="bg-slate-50 border-b py-16 px-4">
+      <section id="como-funciona" className="bg-slate-50 border-b py-16 px-4">
         <div className="max-w-[1000px] mx-auto text-center space-y-10">
           <div className="space-y-4">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
@@ -378,7 +378,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---------------- SEÇÃO 05: COMO O MARCAI FUNCIONA ---------------- */}
-      <section id="como-funciona" className="py-24 px-4 bg-slate-50 border-b">
+      <section className="py-24 px-4 bg-slate-50 border-b">
         <div className="max-w-[1200px] mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">Do primeiro contato ao próximo agendamento.</h2>
