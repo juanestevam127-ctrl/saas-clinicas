@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabase, TABLES } from '@/lib/supabase';
 import axios from 'axios';
 
-const DEFAULT_MSG_AVALIACAO = `Olá, {{nome_paciente}}! 😊
+const DEFAULT_MSG_AVALIACAO = `Olá, {{nome_cliente}}! 😊
 
-Esperamos que sua consulta tenha sido excelente e agradecemos pela confiança na {{nome_clinica}}.
+Esperamos que seu atendimento tenha sido excelente e agradecemos pela confiança na {{nome_empresa}}.
 
 Sua opinião é muito importante para nós! Se puder, reserve um minutinho para avaliar nosso atendimento:
 
-⭐ Avalie nossa clínica:
+⭐ Avalie nossa empresa:
 {{link_avaliacao_google}}
 
-E para acompanhar novidades, dicas de saúde e conteúdos exclusivos, siga nosso Instagram:
+E para acompanhar novidades, siga nosso Instagram:
 
 📲 Instagram:
 {{link_instagram}}
@@ -82,7 +82,9 @@ export async function GET(req: NextRequest) {
           // Montar o template
           const template = clinica.msg_avaliacao || DEFAULT_MSG_AVALIACAO;
           let msg = template
+            .replace(/{{nome_cliente}}/g, consulta.paciente?.nome || '')
             .replace(/{{nome_paciente}}/g, consulta.paciente?.nome || '')
+            .replace(/{{nome_empresa}}/g, clinica.nome || '')
             .replace(/{{nome_clinica}}/g, clinica.nome || '')
             .replace(/{{link_avaliacao_google}}/g, clinica.link_avaliacao_google || '')
             .replace(/{{link_instagram}}/g, clinica.link_instagram || '');

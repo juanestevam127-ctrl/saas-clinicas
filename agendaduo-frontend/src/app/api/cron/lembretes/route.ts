@@ -24,28 +24,28 @@ export async function GET(req: NextRequest) {
 
     const processed = [];
 
-    const DEFAULT_MSG_PRESENCIAL = `Olá, {{nome_paciente}}! 😊
+    const DEFAULT_MSG_PRESENCIAL = `Olá, {{nome_cliente}}! 😊
 
-Este é um lembrete de que sua consulta está confirmada.
+Este é um lembrete de que seu agendamento está confirmado.
 
-📅 Data: {{data_consulta}}
-🕒 Horário: {{horario_consulta}}
-👨‍⚕️ Profissional: {{nome_profissional}}
-📍 Endereço: {{endereco_consultorio}}
+📅 Data: {{data_agendamento}}
+🕒 Horário: {{horario_agendamento}}
+👤 Profissional: {{nome_profissional}}
+📍 Endereço: {{endereco_empresa}}
 
 Se possível, chegue com alguns minutos de antecedência.
 
 Caso precise reagendar ou tenha alguma dúvida, basta responder esta mensagem.
 
-A equipe da {{nome_clinica}} espera por você!`;
+A equipe da {{nome_empresa}} espera por você!`;
 
-    const DEFAULT_MSG_ONLINE = `Olá, {{nome_paciente}}! 😊
+    const DEFAULT_MSG_ONLINE = `Olá, {{nome_cliente}}! 😊
 
-Este é um lembrete de que sua consulta online está confirmada.
+Este é um lembrete de que seu agendamento online está confirmado.
 
-📅 Data: {{data_consulta}}
-🕒 Horário: {{horario_consulta}}
-👨‍⚕️ Profissional: {{nome_profissional}}
+📅 Data: {{data_agendamento}}
+🕒 Horário: {{horario_agendamento}}
+👤 Profissional: {{nome_profissional}}
 💻 Link da reunião: {{link_reuniao}}
 
 Recomendamos acessar o link alguns minutos antes do horário marcado para garantir que tudo esteja funcionando corretamente.
@@ -107,12 +107,17 @@ Até breve!`;
           const horaStr = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
 
           const variables: Record<string, string> = {
+            nome_cliente: consulta.paciente?.nome || '',
             nome_paciente: consulta.paciente?.nome || '',
+            data_agendamento: dataStr,
             data_consulta: dataStr,
+            horario_agendamento: horaStr,
             horario_consulta: horaStr,
             nome_profissional: consulta.profissional?.nome || '',
+            endereco_empresa: config.clinica.endereco || '',
             endereco_consultorio: config.clinica.endereco || '',
             link_reuniao: (consulta as any).link_reuniao || '',
+            nome_empresa: config.clinica.nome || '',
             nome_clinica: config.clinica.nome || '',
           };
 

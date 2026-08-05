@@ -29,11 +29,11 @@ export async function GET(req: NextRequest) {
     }
 
     const processed = [];
-    const DEFAULT_MSG_ANIVERSARIO = `🎉 Feliz aniversário, {{nome_paciente}}!
+    const DEFAULT_MSG_ANIVERSARIO = `🎉 Feliz aniversário, {{nome_cliente}}!
 
-Toda a equipe da {{nome_clinica}} deseja que o seu dia seja repleto de alegria, saúde e muitos momentos especiais.
+Toda a equipe da {{nome_empresa}} deseja que o seu dia seja repleto de alegria, saúde e muitos momentos especiais.
 
-Obrigado por confiar em nosso trabalho. Esperamos continuar cuidando de você sempre que precisar.
+Obrigado por confiar em nosso trabalho. Esperamos continuar atendendo você sempre que precisar.
 
 Parabéns e muitas felicidades! 🎂💙`;
 
@@ -78,7 +78,9 @@ Parabéns e muitas felicidades! 🎂💙`;
         try {
           const template = clinica.msg_aniversario || DEFAULT_MSG_ANIVERSARIO;
           const variables: Record<string, string> = {
+            nome_cliente: paciente.nome || '',
             nome_paciente: paciente.nome || '',
+            nome_empresa: clinica.nome || '',
             nome_clinica: clinica.nome || '',
           };
 
