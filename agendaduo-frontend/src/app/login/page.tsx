@@ -118,7 +118,10 @@ export default function LoginPage() {
 
           {/* Senha */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-500">Senha</label>
+            <div className="flex justify-between items-center">
+              <label className="text-xs font-semibold text-slate-500">Senha</label>
+              <Link href="/login/recuperar-senha" className="text-[11px] font-medium text-blue-600 hover:underline">Esqueci minha senha</Link>
+            </div>
             <div className="relative">
               <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input

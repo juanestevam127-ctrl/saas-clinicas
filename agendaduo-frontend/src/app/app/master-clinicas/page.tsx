@@ -2,15 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building, Users, Calendar, Shield, ExternalLink, Search, Loader2 } from 'lucide-react';
+import { Building, Users, Calendar, Shield, ExternalLink, Search, Loader2, LifeBuoy, Clock, MessageCircle, CheckCircle2 } from 'lucide-react';
 import api from '@/lib/axios';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import Link from 'next/link';
 
 export default function MasterClinicasPage() {
   const router = useRouter();
   const [clinicas, setClinicas] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState<'empresas' | 'suporte'>('empresas');
 
   useEffect(() => {
     const isMaster = localStorage.getItem('agendaduo_is_master') === 'true';
@@ -20,19 +25,25 @@ export default function MasterClinicasPage() {
       return;
     }
 
-    fetchClinicas();
+    fetchData();
   }, []);
 
-  const fetchClinicas = async () => {
+  const fetchData = async () => {
     try {
-      const res = await api.get('/master/clinicas');
-      setClinicas(res.data || []);
+      const [resClinicas, resTickets] = await Promise.all([
+        api.get('/master/clinicas'),
+        api.get('/suporte', { headers: { 'x-is-master': 'true' } }).catch(() => ({ data: [] }))
+      ]);
+      setClinicas(resClinicas.data || []);
+      setTickets(resTickets.data || []);
     } catch {
-      toast.error('Erro ao carregar lista de empresas');
+      toast.error('Erro ao carregar dados do painel');
     } finally {
       setLoading(false);
     }
   };
+
+
 
   const handleImpersonate = (c: any) => {
     // Definir os dados da empresa no localStorage
@@ -51,11 +62,20 @@ export default function MasterClinicasPage() {
     router.push('/app');
   };
 
-  const filtered = clinicas.filter(c => 
+  const filteredClinicas = clinicas.filter(c => 
     c.nome.toLowerCase().includes(search.toLowerCase()) ||
     (c.cnpj && c.cnpj.includes(search)) ||
     c.adminNome.toLowerCase().includes(search.toLowerCase())
   );
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'aberto': return <span className="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-md flex items-center gap-1 w-fit"><Clock className="w-3 h-3" /> Aguardando</span>;
+      case 'respondido': return <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-md flex items-center gap-1 w-fit"><MessageCircle className="w-3 h-3" /> Respondido</span>;
+      case 'resolvido': return <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md flex items-center gap-1 w-fit"><CheckCircle2 className="w-3 h-3" /> Resolvido</span>;
+      default: return null;
+    }
+  };
 
   if (loading) {
     return (
@@ -77,14 +97,33 @@ export default function MasterClinicasPage() {
           </h1>
           <p className="text-sm text-slate-500 mt-1">Gerencie e acesse todas as empresas cadastradas na plataforma.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs bg-blue-50 text-blue-700 font-bold px-3 py-1.5 rounded-full border border-blue-100 shadow-sm">
-            Total: {clinicas.length} empresas
-          </span>
+          <div className="flex gap-2 bg-slate-100 p-1 rounded-xl">
+            <button
+              onClick={() => setActiveTab('empresas')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                activeTab === 'empresas' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              Empresas
+            </button>
+            <button
+              onClick={() => setActiveTab('suporte')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${
+                activeTab === 'suporte' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              Chamados
+              {tickets.filter(t => t.status === 'aberto').length > 0 && (
+                <span className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-md">
+                  {tickets.filter(t => t.status === 'aberto').length}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* Busca */}
+      {activeTab === 'empresas' ? (
+        <>
+          {/* Busca */}
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input
@@ -98,7 +137,7 @@ export default function MasterClinicasPage() {
 
       {/* Grid de Empresas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((c) => (
+        {filteredClinicas.map((c) => (
           <div key={c.id} className="bg-white border rounded-2xl p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-3">
@@ -138,9 +177,47 @@ export default function MasterClinicasPage() {
         ))}
       </div>
 
-      {filtered.length === 0 && (
+      {filteredClinicas.length === 0 && (
         <div className="text-center py-16 bg-white border border-dashed rounded-2xl text-slate-400 text-sm">
           Nenhuma empresa encontrada.
+        </div>
+      )}
+      </>
+      ) : (
+        <div className="bg-white border rounded-2xl overflow-hidden shadow-sm">
+          {tickets.length === 0 ? (
+            <div className="p-12 flex flex-col items-center justify-center text-slate-400 text-center">
+              <LifeBuoy className="w-8 h-8 text-slate-300 mb-4" />
+              <p className="text-sm">Nenhum chamado de suporte aberto.</p>
+            </div>
+          ) : (
+            <div className="divide-y">
+              {tickets.map(ticket => (
+                <Link 
+                  key={ticket.id} 
+                  href={`/app/suporte/${ticket.id}`}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-slate-50 transition-colors gap-4"
+                >
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-slate-800 truncate max-w-md">{ticket.assunto}</h3>
+                      {getStatusBadge(ticket.status)}
+                    </div>
+                    <p className="text-xs text-slate-500 flex items-center gap-2">
+                      <span className="font-semibold text-blue-600">{ticket.clinica?.nome || 'Empresa desconhecida'}</span>
+                      <span>•</span>
+                      <span>Aberto em {format(new Date(ticket.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</span>
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <span className="text-xs font-semibold text-slate-400">
+                      {ticket.mensagens?.[0]?.count || ticket.mensagens?.length || 0} msgs
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
