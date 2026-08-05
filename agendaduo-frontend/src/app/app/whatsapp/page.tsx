@@ -287,7 +287,7 @@ export default function WhatsAppPage() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">WhatsApp</h1>
           <p className="text-slate-500 mt-1 text-sm">
             {userRole === 'admin'
-              ? 'Gerencie instâncias e conexões dos profissionais da clínica'
+              ? 'Gerencie instâncias e conexões dos profissionais da empresa'
               : 'Gerencie a sua conexão de WhatsApp'}
           </p>
         </div>
@@ -408,11 +408,11 @@ export default function WhatsAppPage() {
                 <Label>Nome da Instância *</Label>
                 <Input
                   value={newInstanceName}
-                  onChange={e => setNewInstanceName(e.target.value)}
-                  placeholder="Ex: WhatsApp_Clinica"
+                  onChange={e => setNewInstanceName(e.target.value.replace(/\s/g, ''))}
+                  placeholder="Ex: whatsapp_empresa"
                   required
                 />
-                <p className="text-[10px] text-slate-400">Digite sem espaços ou caracteres especiais</p>
+                <p className="text-[10px] text-slate-400">Os espaços serão removidos automaticamente.</p>
               </div>
 
               {/* Exibe o seletor apenas para o Administrador. Para o Profissional já vincula direto ao perfil dele */}

@@ -177,13 +177,13 @@ export default function DashboardPage() {
 
   const dashboardCards = [
     { 
-      title: isFiltered ? 'Consultas no Período' : 'Consultas Hoje', 
+      title: isFiltered ? 'Agendamentos no Período' : 'Agendamentos Hoje', 
       value: String(consultasCount), 
       icon: Calendar, 
       color: 'text-blue-600 bg-blue-50' 
     },
     { 
-      title: 'Pacientes Ativos', 
+      title: 'Clientes Ativos', 
       value: String(totalPacientes), 
       icon: Users, 
       color: 'text-emerald-600 bg-emerald-50' 

@@ -419,7 +419,7 @@ export default function ProntuariosPage() {
                     <div className="space-y-1.5">
                       <label className="block text-xs font-bold text-slate-700">Nova Anotação Evolutiva</label>
                       <textarea
-                        placeholder="Digite aqui o prontuário, anotações clínicas ou evolução da consulta..."
+                        placeholder="Digite aqui o histórico desse cliente..."
                         rows={4}
                         value={newNota}
                         onChange={e => setNewNota(e.target.value)}
@@ -475,7 +475,7 @@ export default function ProntuariosPage() {
                       ))
                     ) : (
                       <div className="text-center py-12 bg-white border rounded-2xl text-slate-400 text-xs">
-                        Nenhuma evolução clínica anotada para este paciente.
+                        Nenhuma evolução anotada para esse cliente.
                       </div>
                     )}
                   </div>
@@ -593,8 +593,8 @@ export default function ProntuariosPage() {
               {activeTab === 'consultas' && (
                 <div className="space-y-6">
                   <div className="bg-white border rounded-2xl p-5 shadow-sm space-y-1">
-                    <h3 className="text-sm font-bold text-slate-800">Timeline Clínico / Anotações das Consultas</h3>
-                    <p className="text-xs text-slate-500">Veja o histórico de consultas e adicione observações específicas para cada atendimento realizado.</p>
+                    <h3 className="text-sm font-bold text-slate-800">Timeline / Anotações</h3>
+                    <p className="text-xs text-slate-500">Veja o histórico de agendamentos e adicione notas específicas para cada atendimento realizado.</p>
                   </div>
 
                   {loadingConsultas ? (
@@ -648,7 +648,7 @@ export default function ProntuariosPage() {
                             <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-4 space-y-3">
                               <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                                  Anotações / Observações Clínicas do Atendimento
+                                  Anotações / Observações do Atendimento
                                 </span>
                                 {!isEditing && (
                                   <button
@@ -669,7 +669,7 @@ export default function ProntuariosPage() {
                                   <textarea
                                     value={tempObs}
                                     onChange={e => setTempObs(e.target.value)}
-                                    placeholder="Digite notas clínicas específicas para esta consulta (ex: receitas, evolução, queixas do paciente)..."
+                                    placeholder="Digite notas específicas para esse agendamento..."
                                     rows={3}
                                     className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
                                   />
@@ -696,7 +696,7 @@ export default function ProntuariosPage() {
                               ) : (
                                 <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">
                                   {c.observacoes || (
-                                    <span className="text-slate-400 italic">Sem anotações registradas para esta consulta.</span>
+                                    <span className="text-slate-400 italic">Sem anotações registradas para este atendimento.</span>
                                   )}
                                 </p>
                               )}
@@ -707,7 +707,7 @@ export default function ProntuariosPage() {
                     </div>
                   ) : (
                     <div className="text-center py-12 bg-white border rounded-2xl text-slate-400 text-xs">
-                      Nenhuma consulta cadastrada no histórico deste paciente.
+                      Nenhum agendamento cadastrado no histórico deste cliente.
                     </div>
                   )}
                 </div>

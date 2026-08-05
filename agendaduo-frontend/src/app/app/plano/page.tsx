@@ -31,7 +31,7 @@ export default function PlanoPage() {
 
   const handleSubscribe = async () => {
     if (!cnpjInput.trim()) {
-      toast.error('Por favor, informe o CPF ou CNPJ da clínica.');
+      toast.error('Por favor, informe o CPF ou CNPJ da empresa.');
       return;
     }
     setCheckoutLoading(true);
@@ -157,7 +157,7 @@ export default function PlanoPage() {
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                CNPJ ou CPF da Clínica *
+                CNPJ ou CPF da Empresa *
               </label>
               <input
                 type="text"

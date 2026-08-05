@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import api from '@/lib/axios';
 
 const tabs = [
-  { key: 'clinica', label: 'Clínica', icon: Building2 },
+  { key: 'clinica', label: 'Empresa', icon: Building2 },
   { key: 'horarios', label: 'Horários', icon: Clock },
   { key: 'lembretes', label: 'Lembretes', icon: Bell },
 ];
@@ -29,28 +29,28 @@ const defaultHorarios: HorarioConfig[] = [
   { ativo: false, inicio: '08:00', fim: '12:00' }, // Sab
 ];
 
-const defaultMsgPresencial = `Olá, {{nome_paciente}}! 😊
+const defaultMsgPresencial = `Olá, {{nome_cliente}}! 😊
 
-Este é um lembrete de que sua consulta está confirmada.
+Este é um lembrete de que seu agendamento está confirmado.
 
-📅 Data: {{data_consulta}}
-🕒 Horário: {{horario_consulta}}
-👨‍⚕️ Profissional: {{nome_profissional}}
-📍 Endereço: {{endereco_consultorio}}
+📅 Data: {{data_agendamento}}
+🕒 Horário: {{horario_agendamento}}
+👤 Profissional: {{nome_profissional}}
+📍 Endereço: {{endereco_empresa}}
 
 Se possível, chegue com alguns minutos de antecedência.
 
 Caso precise reagendar ou tenha alguma dúvida, basta responder esta mensagem.
 
-A equipe da {{nome_clinica}} espera por você!`;
+A equipe da {{nome_empresa}} espera por você!`;
 
-const defaultMsgOnline = `Olá, {{nome_paciente}}! 😊
+const defaultMsgOnline = `Olá, {{nome_cliente}}! 😊
 
-Este é um lembrete de que sua consulta online está confirmada.
+Este é um lembrete de que seu agendamento online está confirmado.
 
-📅 Data: {{data_consulta}}
-🕒 Horário: {{horario_consulta}}
-👨‍⚕️ Profissional: {{nome_profissional}}
+📅 Data: {{data_agendamento}}
+🕒 Horário: {{horario_agendamento}}
+👤 Profissional: {{nome_profissional}}
 💻 Link da reunião: {{link_reuniao}}
 
 Recomendamos acessar o link alguns minutos antes do horário marcado para garantir que tudo esteja funcionando corretamente.
@@ -59,24 +59,24 @@ Se precisar de ajuda ou desejar reagendar, é só responder esta mensagem.
 
 Até breve!`;
 
-const defaultMsgAniversario = `🎉 Feliz aniversário, {{nome_paciente}}!
+const defaultMsgAniversario = `🎉 Feliz aniversário, {{nome_cliente}}!
 
-Toda a equipe da {{nome_clinica}} deseja que o seu dia seja repleto de alegria, saúde e muitos momentos especiais.
+Toda a equipe da {{nome_empresa}} deseja que o seu dia seja repleto de alegria, saúde e muitos momentos especiais.
 
-Obrigado por confiar em nosso trabalho. Esperamos continuar cuidando de você sempre que precisar.
+Obrigado por confiar em nosso trabalho. Esperamos continuar atendendo você sempre que precisar.
 
 Parabéns e muitas felicidades! 🎂💙`;
 
-const defaultMsgAvaliacao = `Olá, {{nome_paciente}}! 😊
+const defaultMsgAvaliacao = `Olá, {{nome_cliente}}! 😊
 
-Esperamos que sua consulta tenha sido excelente e agradecemos pela confiança na {{nome_clinica}}.
+Esperamos que seu atendimento tenha sido excelente e agradecemos pela confiança na {{nome_empresa}}.
 
 Sua opinião é muito importante para nós! Se puder, reserve um minutinho para avaliar nosso atendimento:
 
-⭐ Avalie nossa clínica:
+⭐ Avalie nossa empresa:
 {{link_avaliacao_google}}
 
-E para acompanhar novidades, dicas de saúde e conteúdos exclusivos, siga nosso Instagram:
+E para acompanhar novidades, siga nosso Instagram:
 
 📲 Instagram:
 {{link_instagram}}
@@ -238,7 +238,7 @@ export default function ConfiguracoesPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Configurações</h1>
-        <p className="text-slate-500 mt-1 text-sm">Gerencie as configurações da sua clínica</p>
+        <p className="text-slate-500 mt-1 text-sm">Gerencie as configurações da sua empresa</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -267,10 +267,10 @@ export default function ConfiguracoesPage() {
           {/* Clinic Settings */}
           {activeTab === 'clinica' && (
             <div className="bg-white border rounded-2xl shadow-sm p-6 space-y-5">
-              <h2 className="text-base font-semibold text-slate-900">Informações da Clínica</h2>
+              <h2 className="text-base font-semibold text-slate-900">Informações da Empresa</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { label: 'Nome da Clínica', key: 'nome', type: 'text' },
+                  { label: 'Nome da Empresa', key: 'nome', type: 'text' },
                   { label: 'CNPJ', key: 'cnpj', type: 'text' },
                   { label: 'Telefone', key: 'telefone', type: 'tel' },
                 ].map(f => (
@@ -323,7 +323,7 @@ export default function ConfiguracoesPage() {
           {activeTab === 'horarios' && (
             <div className="bg-white border rounded-2xl shadow-sm p-6 space-y-4">
               <h2 className="text-base font-semibold text-slate-900">Horário de Funcionamento</h2>
-              <p className="text-sm text-slate-500">Configure os dias e horários padrão de atendimento da clínica.</p>
+              <p className="text-sm text-slate-500">Configure os dias e horários padrão de atendimento da empresa.</p>
               <div className="space-y-2 mt-4">
                 {diasSemana.map((dia, i) => (
                   <div key={dia} className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl border transition-colors ${
@@ -382,9 +382,9 @@ export default function ConfiguracoesPage() {
               <p className="text-sm text-slate-500">Configure quando os lembretes serão enviados automaticamente via WhatsApp.</p>
               <div className="space-y-3 mt-4">
                 {[
-                  { key: 'h24' as const, label: 'Lembrete 24 horas antes', desc: 'Enviado um dia antes da consulta' },
-                  { key: 'h2' as const, label: 'Lembrete 2 horas antes', desc: 'Enviado 2 horas antes da consulta' },
-                  { key: 'h1' as const, label: 'Lembrete 1 hora antes', desc: 'Enviado 1 hora antes da consulta' },
+                  { key: 'h24' as const, label: 'Lembrete 24 horas antes', desc: 'Enviado um dia antes do agendamento' },
+                  { key: 'h2' as const, label: 'Lembrete 2 horas antes', desc: 'Enviado 2 horas antes do agendamento' },
+                  { key: 'h1' as const, label: 'Lembrete 1 hora antes', desc: 'Enviado 1 hora antes do agendamento' },
                 ].map(l => (
                   <div key={l.key} className={`flex items-center gap-4 p-5 rounded-xl border transition-colors ${
                     lembretes[l.key] ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'
@@ -529,8 +529,8 @@ export default function ConfiguracoesPage() {
 
               {/* Lembretes de Avaliação */}
               <div className="border-t pt-5 mt-5 space-y-4">
-                <h3 className="text-sm font-semibold text-slate-800">Lembrete de Avaliação da Clínica</h3>
-                <p className="text-xs text-slate-500">Envie mensagens automáticas convidando os pacientes a avaliarem o atendimento no Google e seguirem o Instagram pós-consulta.</p>
+                <h3 className="text-sm font-semibold text-slate-800">Lembrete de Avaliação da Empresa</h3>
+                <p className="text-xs text-slate-500">Envie mensagens automáticas convidando os clientes a avaliarem o atendimento no Google e seguirem o Instagram pós-atendimento.</p>
                 
                 <div className={`flex flex-col gap-4 p-5 rounded-xl border transition-colors ${
                   clinica.lembreteAvaliacaoAtivo ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200'
@@ -548,7 +548,7 @@ export default function ConfiguracoesPage() {
                     </button>
                     <div className="flex-1">
                       <div className={`text-sm font-semibold ${clinica.lembreteAvaliacaoAtivo ? 'text-slate-800' : 'text-slate-400'}`}>
-                        Ativar Lembrete de Avaliação pós-consulta
+                        Ativar lembrete de avaliação por agendamento
                       </div>
                     </div>
                   </div>
@@ -556,7 +556,7 @@ export default function ConfiguracoesPage() {
                   {clinica.lembreteAvaliacaoAtivo && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 border-t pt-4 border-slate-200/60">
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-slate-600">Enviar quanto tempo após a consulta?</label>
+                        <label className="block text-xs font-semibold text-slate-600">Enviar quanto tempo após o agendamento?</label>
                         <div className="flex gap-2">
                           <input
                             type="number"
@@ -616,7 +616,7 @@ export default function ConfiguracoesPage() {
                       rows={7}
                       className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                     />
-                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{data_consulta}}"}</code>, <code>{"{{horario_consulta}}"}</code>, <code>{"{{nome_profissional}}"}</code>, <code>{"{{endereco_consultorio}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
+                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_cliente}}"}</code>, <code>{"{{data_agendamento}}"}</code>, <code>{"{{horario_agendamento}}"}</code>, <code>{"{{nome_profissional}}"}</code>, <code>{"{{endereco_empresa}}"}</code>, <code>{"{{nome_empresa}}"}</code></p>
                   </div>
 
                   {/* Lembrete Online */}
@@ -628,7 +628,7 @@ export default function ConfiguracoesPage() {
                       rows={7}
                       className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                     />
-                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{data_consulta}}"}</code>, <code>{"{{horario_consulta}}"}</code>, <code>{"{{nome_profissional}}"}</code>, <code>{"{{link_reuniao}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
+                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_cliente}}"}</code>, <code>{"{{data_agendamento}}"}</code>, <code>{"{{horario_agendamento}}"}</code>, <code>{"{{nome_profissional}}"}</code>, <code>{"{{link_reuniao}}"}</code>, <code>{"{{nome_empresa}}"}</code></p>
                   </div>
 
                   {/* Mensagem de Aniversário */}
@@ -640,20 +640,20 @@ export default function ConfiguracoesPage() {
                       rows={5}
                       className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                     />
-                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{nome_clinica}}"}</code></p>
+                    <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_cliente}}"}</code>, <code>{"{{nome_empresa}}"}</code></p>
                   </div>
 
                   {/* Mensagem de Avaliação */}
                   {clinica.lembreteAvaliacaoAtivo && (
                     <div className="space-y-1.5 border-t pt-4">
-                      <label className="block text-xs font-semibold text-slate-600">Mensagem de Avaliação da Clínica</label>
+                      <label className="block text-xs font-semibold text-slate-600">Mensagem de Avaliação da Empresa</label>
                       <textarea
                         value={clinica.msgAvaliacao}
                         onChange={e => setClinica(prev => ({ ...prev, msgAvaliacao: e.target.value }))}
                         rows={9}
                         className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
-                      <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_paciente}}"}</code>, <code>{"{{nome_clinica}}"}</code>, <code>{"{{link_avaliacao_google}}"}</code>, <code>{"{{link_instagram}}"}</code></p>
+                      <p className="text-[10px] text-slate-400">Variáveis: <code>{"{{nome_cliente}}"}</code>, <code>{"{{nome_empresa}}"}</code>, <code>{"{{link_avaliacao_google}}"}</code>, <code>{"{{link_instagram}}"}</code></p>
                     </div>
                   )}
                 </div>
